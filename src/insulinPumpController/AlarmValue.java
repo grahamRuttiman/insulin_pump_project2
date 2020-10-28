@@ -1,5 +1,5 @@
 package insulinPumpController;
 
 public enum AlarmValue {
-    ON, OFF
+    ALARM_ON,ALARM_OFF
 }

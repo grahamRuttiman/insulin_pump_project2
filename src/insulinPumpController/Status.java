@@ -1,5 +1,8 @@
 package insulinPumpController;
 
-public enum Status {
-    RUNNING, WARNING, ERROR
+public class Status {
+
+    public static void setStatus(StatusValue value){
+
+    }
 }

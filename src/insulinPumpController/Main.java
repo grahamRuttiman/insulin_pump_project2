@@ -25,11 +25,11 @@ public class Main {
         JButton automatic_button=new JButton("AUTO");
         JButton manual_button=new JButton("MANUAL");
         ClockIn clock = new ClockIn();
+//        Compdose compdose;
+//        String display1 = compdose.setDisplay1("helloworld!");
 
         // Get user data
         User user = new User();
-
-
         message = "Helloworld";
         ZoneId zone = ZoneId.systemDefault();
 //        Clock clock = Clock.tickSeconds(zone);

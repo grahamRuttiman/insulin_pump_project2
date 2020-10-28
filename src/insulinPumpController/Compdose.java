@@ -1,9 +1,10 @@
 package insulinPumpController;
 
-import input.Switch;
-import output.Alarm;
-
-import static input.Switch.setValue;
+import static insulinPumpController.AlarmValue.ALARM_ON;
+import static insulinPumpController.Status.setStatus;
+import static insulinPumpController.StatusValue.WARNING;
+import static output.Alarm.setAlarm;
+import static output.Display1.setDisplay1;
 
 public class Compdose {
 
@@ -12,36 +13,37 @@ public class Compdose {
     // get switch value switch.getStatus
 // example
 //    SwitchValue switchValue; // switch status
-    Status status; // mode status
-    AlarmValue alarm; // alarm status
+
+//    StatusValue statusValue; // mode status
+//    AlarmValue alarm; // alarm status
     int r2 = 0; // current sensor reading
     int r1 = 0; // previous sensor reading
     int r0 = 0; // previous to r1 sensor reading
-//    int capacity = 100; // capacity of insulin reservoir in mL
-//    int insulin_available = 100; // insulin reservoir level
-//    int max_single_dose = 4; // maximum amount of single dose
-//    int max_daily_dose = 25; // maximum amount of daily dose
     int minimum_dose = 1; // minimum dose
     int safemin = 6; // minimum safe blood sugar level
     int safemax = 14; // maximum safe blood sugar level
-//    int cumulative_dose = 0; // total dose in last 24 hours
-//    int sensorReading;
     int comp_dose = 0;
-    String display1;
 
+//    public Compdose(int r0, int r1, int r2) {
+//    }
+//    String display1;
 
     public Compdose(int v0, int v1, int v2) {
-
         this.r0 = v0;
         this.r1 = v1;
         this.r2 = v2;
+    }
 
+    public int calculate {
         // SUGAR_LOW schema
         if (r2 < safemin) {
             comp_dose = 0;
-            alarm = AlarmValue.ON;
-            status = Status.WARNING;
-            display1 = "Sugar Low";
+//            alarm = ON;
+            setAlarm(ALARM_ON);
+//            statusValue = StatusValue.WARNING;
+            setStatus(WARNING);
+//            display1 = "Sugar Low";
+            setDisplay1("Sugar Low");
         }
 
         // SUGAR_OK schema
@@ -80,39 +82,39 @@ public class Compdose {
                 comp_dose = minimum_dose;
             }
         }
+//
+//        // Set Alarm
+//        setAlarm(alarm);
+//        // set status
+//        setStatusValue(statusValue);
+//        // set display1
+//        setDisplay1(display1);
 
-
-
-        // Set Alarm
-        setAlarm(alarm);
-        // set status
-        setStatus(status);
-        // set display1
-        setDisplay1(display1);
+        return comp_dose;
     }
 
-    public void setAlarm(AlarmValue alarm) {
-        this.alarm = alarm;
-    }
+//    public void setAlarm(AlarmValue alarm) {
+//        this.alarm = alarm;
+//    }
+//
+//    public AlarmValue getAlarm() {
+//        return alarm;
+//    }
+//
+//    public void setStatusValue(StatusValue statusValue) {
+//        this.statusValue = statusValue;
+//    }
+//
+//    public StatusValue getStatusValue() {
+//        return statusValue;
+//    }
+//
+//    public void setDisplay1(String display1) {
+//        this.display1 = display1;
+//    }
 
-    public AlarmValue getAlarm() {
-        return alarm;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setDisplay1(String display1) {
-        this.display1 = display1;
-    }
-
-    public String getDisplay1() {
-        return display1;
-    }
+//    public String getDisplay1() {
+//        return display1;
+//    }
 
 }

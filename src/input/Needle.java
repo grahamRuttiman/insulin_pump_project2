@@ -1,5 +1,5 @@
 package input;
 
 public enum Needle {
-    PRESENT, NOT_PRESENT
+    NEEDLE_PRESENT, NEEDLE_NOT_PRESENT
 }

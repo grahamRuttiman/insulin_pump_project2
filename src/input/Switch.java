@@ -5,14 +5,14 @@ import insulinPumpController.SwitchValue;
 
 public class Switch {
 
-    SwitchValue value;
+    SwitchValue switchValue;
 
-    public static SwitchValue setValue(SwitchValue value) {
-        return value;
+    public void setValue(SwitchValue value) {
+        this.switchValue = value;
     }
 
     public SwitchValue getValue(){
-        return value;
+        return switchValue;
     }
 
 }
