@@ -7,14 +7,15 @@ import static input.Switch.setValue;
 public class Controller {
 
     private static final int safeMin = 6; // minimum safe blood sugar level
-    final int safeMax = 14; // maximum safe blood sugar level
+    private static final int safeMax = 14; // maximum safe blood sugar level
     private static Sensor sensor = new Sensor();
     private static int r2 = sensor.getReading(); // current sensor reading
-    int r1 = safeMax; // previous sensor reading
-    int r0 = safeMin; // previous to r1 sensor reading
+    private static int r1 = safeMax; // previous sensor reading
+    private static int r0 = safeMin; // previous to r1 sensor reading
     public static int compDose;
     public static SugarLevel sugarLevel;
-
+    private static int minDose = 1; // minimum dose
+    Reservior reservior = new Reservior();
 
 
     public static void compDose(){
@@ -25,15 +26,48 @@ public class Controller {
             sugarLevel = SugarLevel.LOW;
         }
 
+        // SUGAR_OK schema
+        else if (r2 >= safeMin && r2 <= safeMax) {
+            // sugar level stable or falling
+            if (r2 <= r1) {
+                compDose = 0;
+            }
+            // sugar level increasing but rate of increase falling
+            else if (r2 > r1 && (r2 - r1) < (r1 - r0)) {
+                compDose = 0;
+            }
+            // sugar level increasing and rate of increase increasing compute dose
+            // a minimum dose must be delivered if rounded to zero
+            else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) == 0) {
+                compDose = minDose;
+            } else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) > 0) {
+                compDose = (r2 - r1) / 4;
+            }
+        }
+
+        // SUGAR_HIGH schema
+        else if (r2 > safeMax){
+            // sugar level increasing. Round down if below 1 unit.
+            if (r2 > r1 && (r2 - r1) / 4 == 0){
+                compDose = minDose;
+            }else if (r2 > r1 && (r2 - r1) / 4 > 0){
+                compDose = (r2 - r1) / 4;
+            }
+            // sugar level stable
+            else if (r2 == r1){
+                compDose = minDose;
+            }
+            // sugar level falling and rate of decrease increasing
+            else if (r2<r1 && (r2 - r1) > (r1 - r0)){
+                compDose = minDose;
+            }
+        }
 
     }
 
     public static void main(String[] args) {
 
 
-
-
-        Reservior reservior = new Reservior();
 
         Compdose compdose = new Compdose(r0, r1, r2);
         int computedDose = 0;
