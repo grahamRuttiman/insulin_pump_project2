@@ -1,10 +1,5 @@
 package insulinPumpController;
 
-import input.Switch;
-import output.Alarm;
-
-import static input.Switch.setValue;
-
 public class Compdose {
 
     //Enum status; // controller status
@@ -12,7 +7,7 @@ public class Compdose {
     // get switch value switch.getStatus
 // example
 //    SwitchValue switchValue; // switch status
-    Status status; // mode status
+    State insulinPump; // mode status
     AlarmValue alarm; // alarm status
     int r2 = 0; // current sensor reading
     int r1 = 0; // previous sensor reading
@@ -36,13 +31,7 @@ public class Compdose {
         this.r1 = v1;
         this.r2 = v2;
 
-        // SUGAR_LOW schema
-        if (r2 < safemin) {
-            comp_dose = 0;
-            alarm = AlarmValue.ON;
-            status = Status.WARNING;
-            display1 = "Sugar Low";
-        }
+
 
         // SUGAR_OK schema
         else if (r2 >= safemin && r2 <= safemax) {
@@ -86,7 +75,7 @@ public class Compdose {
         // Set Alarm
         setAlarm(alarm);
         // set status
-        setStatus(status);
+        setStatus(insulinPump);
         // set display1
         setDisplay1(display1);
     }
@@ -99,12 +88,12 @@ public class Compdose {
         return alarm;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatus(State insulinPump) {
+        this.insulinPump = insulinPump;
     }
 
-    public Status getStatus() {
-        return status;
+    public State getStatus() {
+        return insulinPump;
     }
 
     public void setDisplay1(String display1) {

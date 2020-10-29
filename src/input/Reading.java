@@ -4,7 +4,7 @@ public class Reading {
 
     int sensor_reading = 0;
 
-    public int Reading(){
+    public int getReading(){
         return sensor_reading;
     }
 

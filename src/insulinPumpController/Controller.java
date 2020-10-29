@@ -6,26 +6,51 @@ import static input.Switch.setValue;
 
 public class Controller {
 
+    private static final int safeMin = 6; // minimum safe blood sugar level
+    final int safeMax = 14; // maximum safe blood sugar level
+    private static Sensor sensor = new Sensor();
+    private static int r2 = sensor.getReading(); // current sensor reading
+    int r1 = safeMax; // previous sensor reading
+    int r0 = safeMin; // previous to r1 sensor reading
+
+
+
+
+
+
+    public static void compDose(){
+
+        int compDose;
+
+        // SUGAR_LOW schema
+        if (r2 < safeMin) {
+            compDose = 0;
+            alarm = AlarmValue.ON;
+            insulinPump = State.TEST;
+            display1 = "Sugar Low";
+        }
+
+
+    }
+
     public static void main(String[] args) {
 
-        int r2 = 0; // current sensor reading
-        int r1 = 0; // previous sensor reading
-        int r0 = 0; // previous to r1 sensor readi
-        int sample_reading = 8;
-        Sensor sensor = new Sensor(sample_reading);
-        int sensor_reading = sensor.getReading();
+
+
+
+        Reservior reservior = new Reservior();
+
         Compdose compdose = new Compdose(r0, r1, r2);
         int computedDose = 0;
-        final int capacity = 100; // capacity of insulin reservoir in mL
-        int insulin_available = 100; // insulin reservoir level
+
+
         final int max_single_dose = 4; // maximum amount of single dose
         final int max_daily_dose = 25; // maximum amount of daily dose
         final int minimum_dose = 1; // minimum dose
-        final int safemin = 6; // minimum safe blood sugar level
-        final int safemax = 14; // maximum safe blood sugar level
         int cumulative_dose = 0; // total dose in last 24 hours
         int dose = 0;
-        Status status = Status.RUNNING; // mode status
+
+        State insulinPump = State.RUN; // mode status
         AlarmValue alarm; // alarm status
         String display1;
         SwitchValue switchValue = setValue(SwitchValue.OFF);
@@ -37,8 +62,8 @@ public class Controller {
         // STARTUP
         if (switchValue == SwitchValue.OFF || switchValue == SwitchValue.AUTO){
             dose = 0;
-            r0 = safemin;
-            r1 = safemax;
+            r0 = safeMin;
+            r1 = safeMax;
             // RUN TEST
         }
 
@@ -54,11 +79,11 @@ public class Controller {
 
         // TEST
         if (hardwareTest == HardwareTest.OK && needle == Needle.PRESENT && insulinReservoir == InsulinReservoir.PRESENT){
-            status = Status.RUNNING;
+            insulinPump = State.RUN;
             alarm = AlarmValue.OFF;
             display1 = "";
         }
-        while (status == Status.ERROR){
+        while (insulinPump == State.TEST){
             alarm = AlarmValue.ON;
             if (needle == Needle.NOT_PRESENT){
                 display1 = "No needle unit";
@@ -79,14 +104,14 @@ public class Controller {
                 display1 = "Needle failure";
             }
             else if (hardwareTest == HardwareTest.OK && needle == Needle.PRESENT && insulinReservoir == InsulinReservoir.PRESENT){
-                status = Status.RUNNING;
+                insulinPump = State.RUN;
                 alarm = AlarmValue.OFF;
                 display1 = "";
             }
         }
 
         // RUN
-        while (switchValue == SwitchValue.AUTO && (status ==  Status.RUNNING || status == Status.WARNING)
+        while (switchValue == SwitchValue.AUTO && (insulinPump ==  State.RUN || insulinPump == State.RUN)
                 && insulin_available >= max_single_dose && cumulative_dose < max_daily_dose){
             // If the computed insulin dose is zero, don’t deliver any insulin
             if (computedDose == 0){
@@ -95,7 +120,7 @@ public class Controller {
             // The maximum daily dose would be exceeded if the computed dose was delivered
             else if(computedDose + cumulative_dose > max_daily_dose){
                 alarm = AlarmValue.ON;
-                status = Status.WARNING;
+                insulinPump = State.TEST;
                 dose = max_daily_dose - cumulative_dose;
             }
             // The normal situation. If maximum single dose is not exceeded then deliver computed dose
@@ -111,7 +136,7 @@ public class Controller {
             cumulative_dose = cumulative_dose + dose;
 
             if (insulin_available <= (max_single_dose * 4)){
-                status = Status.WARNING;
+                insulinPump = State.TEST;
                 display1 = "Insulin low";
             }
 
