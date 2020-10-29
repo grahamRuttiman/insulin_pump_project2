@@ -17,15 +17,15 @@ import static output.Display1.setDisplay1;
 
 public class Controller {
 
-//    public int r2 = 0; // current sensor reading
-//    public int r1 = 0; // previous sensor reading
-//    public int r0 = 0; // previous to r1 sensor reading
+    public int r2 = 0; // current sensor reading
+    public int r1 = 0; // previous sensor reading
+    public int r0 = 0; // previous to r1 sensor reading
 
-    public static void main(String[] args) {
+    public Controller () {
 
-        int r2 = 0; // current sensor reading
-        int r1 = 0; // previous sensor reading
-        int r0 = 0; // previous to r1 sensor reading
+//        int r2 = 0; // current sensor reading
+//        int r1 = 0; // previous sensor reading
+//        int r0 = 0; // previous to r1 sensor reading
         int sample_reading = 8;
         Sensor sensor = new Sensor(sample_reading);
         int sensor_reading = sensor.getReading();
@@ -53,14 +53,14 @@ public class Controller {
         HardwareTest hardwareTest = OK;
         Needle needle = NEEDLE_NOT_PRESENT;
 
-        Compdose compdose = new Compdose(r0,r1,r2);
+        Compdose compdose = new Compdose(r0, r1, r2);
         int computedDose = compdose.calculate();
 
 //        comodose =
 //        Compdose computedDose = new Compdose(r0,r1,r2);
 
         // STARTUP
-        if (switchValue == OFF || switchValue == SwitchValue.AUTO){
+        if (switchValue == OFF || switchValue == SwitchValue.AUTO) {
             dose = 0;
             r0 = safemin;
             r1 = safemax;
@@ -68,8 +68,8 @@ public class Controller {
         }
 
         // RESET
-        while (insulinReservoir == NOT_PRESENT){
-            if (insulinReservoir == InsulinReservoir.PRESENT){
+        while (insulinReservoir == NOT_PRESENT) {
+            if (insulinReservoir == InsulinReservoir.PRESENT) {
                 insulin_available = capacity;
                 insulinLevel = InsulinLevel.OK;
                 // RUN TEST
@@ -78,7 +78,7 @@ public class Controller {
         }
 
         // TEST
-        if (hardwareTest == OK && needle == NEEDLE_NOT_PRESENT && insulinReservoir == InsulinReservoir.PRESENT){
+        if (hardwareTest == OK && needle == NEEDLE_NOT_PRESENT && insulinReservoir == InsulinReservoir.PRESENT) {
 //            statusValue = RUNNING;
             setStatus(RUNNING);
 //            alarm = AlarmValue.OFF;
@@ -86,34 +86,28 @@ public class Controller {
 //            display1 = "";
             setDisplay1("");
         }
-        while (statusValue == StatusValue.ERROR){
+        while (statusValue == StatusValue.ERROR) {
 //            alarm = AlarmValue.ON;
             setAlarm(ALARM_ON);
-            if (needle == NEEDLE_NOT_PRESENT){
+            if (needle == NEEDLE_NOT_PRESENT) {
 //                display1 = "No needle unit";
                 setDisplay1("No needle unit");
-            }
-            else if (insulinReservoir == NOT_PRESENT || insulin_available < max_single_dose){
+            } else if (insulinReservoir == NOT_PRESENT || insulin_available < max_single_dose) {
 //                display1 = "No insulin";
                 setDisplay1("No insulin");
-            }
-            else if (hardwareTest == HardwareTest.BATTERYLOW){
+            } else if (hardwareTest == HardwareTest.BATTERYLOW) {
 //                display1 = "Battery low";
                 setDisplay1("Battery low");
-            }
-            else if (hardwareTest == HardwareTest.PUMPFAIL){
+            } else if (hardwareTest == HardwareTest.PUMPFAIL) {
 //                display1 = "Pump failure";
                 setDisplay1("Pump failure");
-            }
-            else if (hardwareTest == HardwareTest.SENSORFAIL){
+            } else if (hardwareTest == HardwareTest.SENSORFAIL) {
 //                display1 = "Sensor failure";
                 setDisplay1("Sensor failure");
-            }
-            else if (hardwareTest == HardwareTest.DELIVERYFAIL){
+            } else if (hardwareTest == HardwareTest.DELIVERYFAIL) {
 //                display1 = "Needle failure";
                 setDisplay1("Needle failure");
-            }
-            else if (hardwareTest == OK && needle == NEEDLE_NOT_PRESENT && insulinReservoir == InsulinReservoir.PRESENT){
+            } else if (hardwareTest == OK && needle == NEEDLE_NOT_PRESENT && insulinReservoir == InsulinReservoir.PRESENT) {
 //                statusValue = RUNNING;
                 setStatus(RUNNING);
 //                alarm = AlarmValue.OFF;
@@ -124,14 +118,14 @@ public class Controller {
         }
 
         // RUN
-        while (switchValue == SwitchValue.AUTO && (statusValue ==  RUNNING || statusValue == StatusValue.WARNING)
-                && insulin_available >= max_single_dose && cumulative_dose < max_daily_dose){
+        while (switchValue == SwitchValue.AUTO && (statusValue == RUNNING || statusValue == StatusValue.WARNING)
+                && insulin_available >= max_single_dose && cumulative_dose < max_daily_dose) {
             // If the computed insulin dose is zero, don’t deliver any insulin
-            if (computedDose == 0){
+            if (computedDose == 0) {
                 dose = 0;
             }
             // The maximum daily dose would be exceeded if the computed dose was delivered
-            else if(computedDose + cumulative_dose > max_daily_dose){
+            else if (computedDose + cumulative_dose > max_daily_dose) {
 //                alarm = AlarmValue.ON;
                 setAlarm(ALARM_ON);
 //                statusValue = StatusValue.WARNING;
@@ -139,18 +133,18 @@ public class Controller {
                 dose = max_daily_dose - cumulative_dose;
             }
             // The normal situation. If maximum single dose is not exceeded then deliver computed dose
-            else if ((computedDose + cumulative_dose) < max_daily_dose && computedDose <= max_single_dose){
+            else if ((computedDose + cumulative_dose) < max_daily_dose && computedDose <= max_single_dose) {
                 dose = computedDose;
             }
             // The single dose computed is too high. Restrict the dose delivered to the maximum single dose
-            else if (computedDose > max_single_dose){
+            else if (computedDose > max_single_dose) {
                 dose = max_single_dose;
             }
 
             insulin_available = insulin_available - dose;
             cumulative_dose = cumulative_dose + dose;
 
-            if (insulin_available <= (max_single_dose * 4)){
+            if (insulin_available <= (max_single_dose * 4)) {
                 setStatus(WARNING);
                 setDisplay1("Insulin low");
 //                statusValue = StatusValue.WARNING;
@@ -162,7 +156,7 @@ public class Controller {
         }
 
         // MANUAL
-        if (switchValue == SwitchValue.MANUAL){
+        if (switchValue == SwitchValue.MANUAL) {
             display1 = "Manual Override";
             // dose = read manualDeliveryButton;
             // do something with the reading to convert to dose
@@ -170,116 +164,61 @@ public class Controller {
             insulin_available = insulin_available - dose;
         }
 
-//        public int Compdose(){
-//            int comp_dose = 0;
-//            int minimum_dose = 1; // minimum dose
-//            int safemin = 6; // minimum safe blood sugar level
-//            int safemax = 14; // maximum safe blood sugar level
-//
-//            // SUGAR_LOW schema
-//            if (r2 < safemin) {
-//                comp_dose = 0;
-////            alarm = AlarmValue.ON;
-////            status = Status.WARNING;
-////            display1 = "Sugar Low";
-//            }
-//
-//            // SUGAR_OK schema
-//            else if (r2 >= safemin && r2 <= safemax) {
-//                // sugar level stable or falling
-//                if (r2 <= r1) {
-//                    comp_dose = 0;
-//                }
-//                // sugar level increasing but rate of increase falling
-//                else if (r2 > r1 && (r2 - r1) < (r1 - r0)) {
-//                    comp_dose = 0;
-//                }
-//                // sugar level increasing and rate of increase increasing compute dose
-//                // a minimum dose must be delivered if rounded to zero
-//                else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) == 0) {
-//                    comp_dose = minimum_dose;
-//                } else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) > 0) {
-//                    comp_dose = (r2 - r1) / 4;
-//                }
-//            }
-//
-//            // SUGAR_HIGH schema
-//            else if (r2 > safemax){
-//                // sugar level increasing. Round down if below 1 unit.
-//                if (r2 > r1 && (r2 - r1) / 4 == 0){
-//                    comp_dose = minimum_dose;
-//                }else if (r2 > r1 && (r2 - r1) / 4 > 0){
-//                    comp_dose = (r2 - r1) / 4;
-//                }
-//                // sugar level stable
-//                else if (r2 == r1){
-//                    comp_dose = minimum_dose;
-//                }
-//                // sugar level falling and rate of decrease increasing
-//                else if (r2<r1 && (r2 - r1) > (r1 - r0)){
-//                    comp_dose = minimum_dose;
-//                }
-//            }
-//
-//            return comp_dose;
-//        }
-
-
     }
 
-//    public int Compdose(){
-//        int comp_dose = 0;
-//        int minimum_dose = 1; // minimum dose
-//        int safemin = 6; // minimum safe blood sugar level
-//        int safemax = 14; // maximum safe blood sugar level
-//
-//        // SUGAR_LOW schema
-//        if (r2 < safemin) {
-//            comp_dose = 0;
-////            alarm = AlarmValue.ON;
-////            status = Status.WARNING;
-////            display1 = "Sugar Low";
-//        }
-//
-//        // SUGAR_OK schema
-//        else if (r2 >= safemin && r2 <= safemax) {
-//            // sugar level stable or falling
-//            if (r2 <= r1) {
-//                comp_dose = 0;
-//            }
-//            // sugar level increasing but rate of increase falling
-//            else if (r2 > r1 && (r2 - r1) < (r1 - r0)) {
-//                comp_dose = 0;
-//            }
-//            // sugar level increasing and rate of increase increasing compute dose
-//            // a minimum dose must be delivered if rounded to zero
-//            else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) == 0) {
-//                comp_dose = minimum_dose;
-//            } else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) > 0) {
-//                comp_dose = (r2 - r1) / 4;
-//            }
-//        }
-//
-//        // SUGAR_HIGH schema
-//        else if (r2 > safemax){
-//            // sugar level increasing. Round down if below 1 unit.
-//            if (r2 > r1 && (r2 - r1) / 4 == 0){
-//                comp_dose = minimum_dose;
-//            }else if (r2 > r1 && (r2 - r1) / 4 > 0){
-//                comp_dose = (r2 - r1) / 4;
-//            }
-//            // sugar level stable
-//            else if (r2 == r1){
-//                comp_dose = minimum_dose;
-//            }
-//            // sugar level falling and rate of decrease increasing
-//            else if (r2<r1 && (r2 - r1) > (r1 - r0)){
-//                comp_dose = minimum_dose;
-//            }
-//        }
-//
-//        return comp_dose;
-//    }
+    public int Compdose(){
+        int comp_dose = 0;
+        int minimum_dose = 1; // minimum dose
+        int safemin = 6; // minimum safe blood sugar level
+        int safemax = 14; // maximum safe blood sugar level
+
+        // SUGAR_LOW schema
+        if (r2 < safemin) {
+            comp_dose = 0;
+//            alarm = AlarmValue.ON;
+//            status = Status.WARNING;
+//            display1 = "Sugar Low";
+        }
+
+        // SUGAR_OK schema
+        else if (r2 >= safemin && r2 <= safemax) {
+            // sugar level stable or falling
+            if (r2 <= r1) {
+                comp_dose = 0;
+            }
+            // sugar level increasing but rate of increase falling
+            else if (r2 > r1 && (r2 - r1) < (r1 - r0)) {
+                comp_dose = 0;
+            }
+            // sugar level increasing and rate of increase increasing compute dose
+            // a minimum dose must be delivered if rounded to zero
+            else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) == 0) {
+                comp_dose = minimum_dose;
+            } else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) > 0) {
+                comp_dose = (r2 - r1) / 4;
+            }
+        }
+
+        // SUGAR_HIGH schema
+        else if (r2 > safemax){
+            // sugar level increasing. Round down if below 1 unit.
+            if (r2 > r1 && (r2 - r1) / 4 == 0){
+                comp_dose = minimum_dose;
+            }else if (r2 > r1 && (r2 - r1) / 4 > 0){
+                comp_dose = (r2 - r1) / 4;
+            }
+            // sugar level stable
+            else if (r2 == r1){
+                comp_dose = minimum_dose;
+            }
+            // sugar level falling and rate of decrease increasing
+            else if (r2<r1 && (r2 - r1) > (r1 - r0)){
+                comp_dose = minimum_dose;
+            }
+        }
+
+        return comp_dose;
+    }
 
 
 }

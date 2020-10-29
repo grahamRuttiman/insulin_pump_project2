@@ -7,7 +7,7 @@ public class Display1 {
     public String displayMessage;
 
     public static void setDisplay1(String message){
-        displayMessage = message;
+//        displayMessage = message;
         // Display 1
         JFrame jFrame=new JFrame("Display 1");
         final JTextField Display1 =new JTextField();
