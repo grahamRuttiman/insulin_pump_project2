@@ -12,22 +12,17 @@ public class Controller {
     private static int r2 = sensor.getReading(); // current sensor reading
     int r1 = safeMax; // previous sensor reading
     int r0 = safeMin; // previous to r1 sensor reading
-
-
-
+    public static int compDose;
+    public static SugarLevel sugarLevel;
 
 
 
     public static void compDose(){
 
-        int compDose;
-
         // SUGAR_LOW schema
         if (r2 < safeMin) {
             compDose = 0;
-            alarm = AlarmValue.ON;
-            insulinPump = State.TEST;
-            display1 = "Sugar Low";
+            sugarLevel = SugarLevel.LOW;
         }
 
 
