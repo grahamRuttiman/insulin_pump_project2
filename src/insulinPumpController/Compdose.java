@@ -31,7 +31,21 @@ public class Compdose {
         this.r1 = v1;
         this.r2 = v2;
 
+<<<<<<< Updated upstream
 
+=======
+    public int calculate() {
+        // SUGAR_LOW schema
+        if (r2 < safemin) {
+            comp_dose = 0;
+//            alarm = ON;
+            setAlarm(ALARM_ON);
+//            statusValue = StatusValue.WARNING;
+            setStatus(WARNING);
+//            display1 = "Sugar Low";
+            setDisplay1("Sugar Low");
+        }
+>>>>>>> Stashed changes
 
         // SUGAR_OK schema
         else if (r2 >= safemin && r2 <= safemax) {
