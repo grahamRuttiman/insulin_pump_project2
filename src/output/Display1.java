@@ -16,9 +16,9 @@ public class Display1 {
 
     }
 
-    public static String getDisplay1(){
-
-    }
+//    public static String getDisplay1(){
+//
+//    }
 
 
 }
