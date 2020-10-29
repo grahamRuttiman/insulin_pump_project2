@@ -1,5 +1,6 @@
 package insulinPumpController;
 
+import demo.Demo;
 import input.ClockIn;
 
 import javax.swing.*;
@@ -34,6 +35,9 @@ public class Main {
         ZoneId zone = ZoneId.systemDefault();
 //        Clock clock = Clock.tickSeconds(zone);
 //        time = clock.instant().toString();
+
+        Demo demo = new Demo(); // create new demonstration
+        demo.run();
 
         JFrame jFrame=new JFrame("Insulin Pump");
 
