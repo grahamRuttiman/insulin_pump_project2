@@ -23,14 +23,9 @@ public class Controller {
 
     public Controller () {
 
-//        int r2 = 0; // current sensor reading
-//        int r1 = 0; // previous sensor reading
-//        int r0 = 0; // previous to r1 sensor reading
         int sample_reading = 8;
         Sensor sensor = new Sensor(sample_reading);
         int sensor_reading = sensor.getReading();
-//        Compdose compdose = new Compdose(r0,r1,r2);
-//        int computedDose = 0;
         final int capacity = 100; // capacity of insulin reservoir in mL
         int insulin_available = 100; // insulin reservoir level
         final int max_single_dose = 4; // maximum amount of single dose
@@ -45,21 +40,12 @@ public class Controller {
         String display1;
         Switch switchMode = null;
         switchMode.setValue(OFF);
-//        SwitchValue switchValue = SwitchValue.OFF;
         SwitchValue switchValue = switchMode.getValue();
-
         InsulinReservoir insulinReservoir = InsulinReservoir.NOT_PRESENT;
         InsulinLevel insulinLevel = NOT_OK;
         HardwareTest hardwareTest = OK;
         Needle needle = NEEDLE_NOT_PRESENT;
-
-
         int computedDose = Compdose();
-//        Compdose compdose = new Compdose(r0, r1, r2);
-//        int computedDose = compdose.calculate();
-
-//        comodose =
-//        Compdose computedDose = new Compdose(r0,r1,r2);
 
         // STARTUP
         if (switchValue == OFF || switchValue == SwitchValue.AUTO) {

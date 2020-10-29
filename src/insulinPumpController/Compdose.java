@@ -82,39 +82,8 @@ public class Compdose {
                 comp_dose = minimum_dose;
             }
         }
-//
-//        // Set Alarm
-//        setAlarm(alarm);
-//        // set status
-//        setStatusValue(statusValue);
-//        // set display1
-//        setDisplay1(display1);
 
         return comp_dose;
     }
-
-//    public void setAlarm(AlarmValue alarm) {
-//        this.alarm = alarm;
-//    }
-//
-//    public AlarmValue getAlarm() {
-//        return alarm;
-//    }
-//
-//    public void setStatusValue(StatusValue statusValue) {
-//        this.statusValue = statusValue;
-//    }
-//
-//    public StatusValue getStatusValue() {
-//        return statusValue;
-//    }
-//
-//    public void setDisplay1(String display1) {
-//        this.display1 = display1;
-//    }
-
-//    public String getDisplay1() {
-//        return display1;
-//    }
 
 }
