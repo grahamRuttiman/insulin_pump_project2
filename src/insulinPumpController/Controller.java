@@ -53,8 +53,10 @@ public class Controller {
         HardwareTest hardwareTest = OK;
         Needle needle = NEEDLE_NOT_PRESENT;
 
-        Compdose compdose = new Compdose(r0, r1, r2);
-        int computedDose = compdose.calculate();
+
+        int computedDose = Compdose();
+//        Compdose compdose = new Compdose(r0, r1, r2);
+//        int computedDose = compdose.calculate();
 
 //        comodose =
 //        Compdose computedDose = new Compdose(r0,r1,r2);
