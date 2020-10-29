@@ -34,7 +34,7 @@ public class Compdose {
         this.r2 = v2;
     }
 
-    public int calculate {
+    public int calculate (){
         // SUGAR_LOW schema
         if (r2 < safemin) {
             comp_dose = 0;

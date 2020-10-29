@@ -17,16 +17,20 @@ import static output.Display1.setDisplay1;
 
 public class Controller {
 
+//    public int r2 = 0; // current sensor reading
+//    public int r1 = 0; // previous sensor reading
+//    public int r0 = 0; // previous to r1 sensor reading
+
     public static void main(String[] args) {
 
         int r2 = 0; // current sensor reading
         int r1 = 0; // previous sensor reading
-        int r0 = 0; // previous to r1 sensor readi
+        int r0 = 0; // previous to r1 sensor reading
         int sample_reading = 8;
         Sensor sensor = new Sensor(sample_reading);
         int sensor_reading = sensor.getReading();
-        Compdose compdose = new Compdose();
-        int computedDose = 0;
+//        Compdose compdose = new Compdose(r0,r1,r2);
+//        int computedDose = 0;
         final int capacity = 100; // capacity of insulin reservoir in mL
         int insulin_available = 100; // insulin reservoir level
         final int max_single_dose = 4; // maximum amount of single dose
@@ -49,7 +53,11 @@ public class Controller {
         HardwareTest hardwareTest = OK;
         Needle needle = NEEDLE_NOT_PRESENT;
 
-        computedDose = new Compdose(r0,r1,r2);
+        Compdose compdose = new Compdose(r0,r1,r2);
+        int computedDose = compdose.calculate();
+
+//        comodose =
+//        Compdose computedDose = new Compdose(r0,r1,r2);
 
         // STARTUP
         if (switchValue == OFF || switchValue == SwitchValue.AUTO){
@@ -162,9 +170,64 @@ public class Controller {
             insulin_available = insulin_available - dose;
         }
 
+//        public int Compdose(){
+//            int comp_dose = 0;
+//            int minimum_dose = 1; // minimum dose
+//            int safemin = 6; // minimum safe blood sugar level
+//            int safemax = 14; // maximum safe blood sugar level
+//
+//            // SUGAR_LOW schema
+//            if (r2 < safemin) {
+//                comp_dose = 0;
+////            alarm = AlarmValue.ON;
+////            status = Status.WARNING;
+////            display1 = "Sugar Low";
+//            }
+//
+//            // SUGAR_OK schema
+//            else if (r2 >= safemin && r2 <= safemax) {
+//                // sugar level stable or falling
+//                if (r2 <= r1) {
+//                    comp_dose = 0;
+//                }
+//                // sugar level increasing but rate of increase falling
+//                else if (r2 > r1 && (r2 - r1) < (r1 - r0)) {
+//                    comp_dose = 0;
+//                }
+//                // sugar level increasing and rate of increase increasing compute dose
+//                // a minimum dose must be delivered if rounded to zero
+//                else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) == 0) {
+//                    comp_dose = minimum_dose;
+//                } else if (r2 > r1 && (r2 - r1) >= (r1 - r0) && (r2 - r1) > 0) {
+//                    comp_dose = (r2 - r1) / 4;
+//                }
+//            }
+//
+//            // SUGAR_HIGH schema
+//            else if (r2 > safemax){
+//                // sugar level increasing. Round down if below 1 unit.
+//                if (r2 > r1 && (r2 - r1) / 4 == 0){
+//                    comp_dose = minimum_dose;
+//                }else if (r2 > r1 && (r2 - r1) / 4 > 0){
+//                    comp_dose = (r2 - r1) / 4;
+//                }
+//                // sugar level stable
+//                else if (r2 == r1){
+//                    comp_dose = minimum_dose;
+//                }
+//                // sugar level falling and rate of decrease increasing
+//                else if (r2<r1 && (r2 - r1) > (r1 - r0)){
+//                    comp_dose = minimum_dose;
+//                }
+//            }
+//
+//            return comp_dose;
+//        }
+
+
     }
 
-//    public int Compdose(int r0, int r1, int r2){
+//    public int Compdose(){
 //        int comp_dose = 0;
 //        int minimum_dose = 1; // minimum dose
 //        int safemin = 6; // minimum safe blood sugar level
