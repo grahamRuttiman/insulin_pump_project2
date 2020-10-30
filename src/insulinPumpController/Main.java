@@ -27,7 +27,7 @@ public class Main {
     private static State state;
     private static Sensor sensor;
     private static Clock clock;
-    private static Controller controller;
+    static Controller controller = new Controller();
 
 
     static void drawGUI() {
@@ -119,15 +119,7 @@ public class Main {
         });
         clockTimer.start();
 
-        //blood sugar timer wait 10 minutes
-        Timer sensorTimer = new Timer(600000, new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.getReading;
-            }
-        });
-        sensorTimer.start();
 
         //Self Test Timer every 30 seconds
         Timer testTimer = new Timer(30000, new ActionListener() {
@@ -143,34 +135,31 @@ public class Main {
 
     }
 
+    static void run(){
+        state = State.RUN;
+        display1.setText("Automatic Mode");
+
+        //blood sugar timer wait 10 minutes
+        Timer sensorTimer = new Timer(600000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.compDose = controller.compDose();
+                if (controller.compDose == 0){
+                    //Send update that nothing happened?
+                } else if (controller.compDose > 0){
+
+                }
+
+
+            }
+        });
+        sensorTimer.start();
+
+    }
+
     public static void main(String[] args){
 
         drawGUI();
         state = State.OFF;
-
-
-
-        int blood_sugar_level;
-        int dosage;
-        dosage = 1;
-//        time = "12";
-        String message;
-
-//        ClockIn clock = new ClockIn();
-
-
-
-        // Get user data
-        User user = new User();
-
-
-        message = "Helloworld";
-        ZoneId zone = ZoneId.systemDefault();
-//        Clock clock = Clock.tickSeconds(zone);
-//        time = clock.instant().toString();
-
-
-
-
 
 } }

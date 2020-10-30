@@ -2,7 +2,7 @@ package input;
 
 public class Sensor {
 
-    int reading = 0;
+    int reading;
 
     public Sensor(){
         //Get Reading from SQL
