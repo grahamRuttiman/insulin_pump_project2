@@ -1,5 +1,6 @@
 package insulinPumpController;
 
+import demo.Demo;
 import input.*;
 
 import static input.HardwareTest.OK;
@@ -48,7 +49,11 @@ public class Controller {
         int computedDose = Compdose();
 
         Sensor sensor = new Sensor();
-        r2 = sensor.getReading();
+        r2 = sensor.getReading(); // ideally read from database
+        // OR:
+        // every time a clock timer takes reading.
+        Demo demo = new Demo();
+        r2 = demo.getReading();
 
         // STARTUP
         if (switchValue == OFF || switchValue == SwitchValue.AUTO) {
