@@ -6,12 +6,11 @@ public class Controller {
 
     private static final int safeMin = 6; // minimum safe blood sugar level
     private static final int safeMax = 14; // maximum safe blood sugar level
-    final static int max_single_dose = 4; // maximum amount of single dose
-    final static int max_daily_dose = 25; // maximum amount of daily dose
+    final static int maxSingleDose = 4; // maximum amount of single dose
+    final static int maxDailyDose = 25; // maximum amount of daily dose
     final static int minDose = 1; // minimum dose
     public int compDose;
-
-    int cumulative_dose; // total dose in last 24 hours //Get from SQL
+    public int cumulativeDose; // total dose in last 24 hours //Get from SQL
 
     public static Sensor sensor;
     public static SugarLevel sugarLevel;
@@ -24,9 +23,9 @@ public class Controller {
     HardwareTest hardwareTest = HardwareTest.OK;
 
 
-    public int compDose() {
+    public void compDose() {
 
-        int compDose = 0;
+        compDose = 0;
 
         r0 = r1;
         r1 = r2;
@@ -77,13 +76,18 @@ public class Controller {
                 compDose = minDose;
             }
         }
-        return compDose;
+
+        //Over max Single doses
+        if (compDose > maxSingleDose){
+            compDose = maxSingleDose;
+        }
+
+        // Would exceed max daily dose
+        if (compDose + cumulativeDose > maxDailyDose){
+            compDose = maxDailyDose - cumulativeDose;
+        }
+
     }
-
-    public void administerInsulin(){
-        reservoir.useInsulin(compDose);
-
-    }
-
+    
 
 }

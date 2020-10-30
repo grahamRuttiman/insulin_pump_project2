@@ -242,7 +242,7 @@ public class Main {
                 clockDisplay.setText(clock.getTime());
                 //Check if its a new day.
                 if (clock.getTime().equals("00:00:00")){
-                    controller.cumulative_dose = 0;
+                    controller.cumulativeDose = 0;
                 }
             }
         });
@@ -268,11 +268,13 @@ public class Main {
         Timer sensorTimer = new Timer(600000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.compDose = controller.compDose();
+                controller.compDose();
+                //Warnings about sugar level - alarm?
                 if (controller.compDose == 0){
                     //Send update that nothing happened?
                 } else if (controller.compDose > 0){
-                    controller.administerInsulin();
+                    controller.reservoir.useInsulin(controller.compDose);
+                    //Send update to terminal
                 }
 
             }
