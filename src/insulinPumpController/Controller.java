@@ -24,8 +24,8 @@ public class Controller {
     public Controller () {
 
         int sample_reading = 8;
-        Sensor sensor = new Sensor(sample_reading);
-        int sensor_reading = sensor.getReading();
+//        Sensor sensor = new Sensor(sample_reading);
+//        int sensor_reading = sensor.getReading();
         final int capacity = 100; // capacity of insulin reservoir in mL
         int insulin_available = 100; // insulin reservoir level
         final int max_single_dose = 4; // maximum amount of single dose
@@ -46,6 +46,9 @@ public class Controller {
         HardwareTest hardwareTest = OK;
         Needle needle = NEEDLE_NOT_PRESENT;
         int computedDose = Compdose();
+
+        Sensor sensor = new Sensor();
+        r2 = sensor.getReading();
 
         // STARTUP
         if (switchValue == OFF || switchValue == SwitchValue.AUTO) {

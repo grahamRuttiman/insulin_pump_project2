@@ -4,7 +4,7 @@ public class Sensor {
 
     int reading = 0;
 
-    public Sensor(int sensor_reading){
+    public void setReading(int sensor_reading){
         this.reading = sensor_reading;
     }
 
