@@ -3,26 +3,24 @@ package insulinPumpController;
 import input.Clock;
 import input.Sensor;
 
-import javax.naming.ldap.Control;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.*;
 import javax.swing.Timer;
 
 public class Main {
 
-    private static JFrame jFrame = new JFrame("Insulin Pump");
+    private static final JFrame jFrame = new JFrame("Insulin Pump");
 
-    private static JTextField display1 =new JTextField();
-   private static JTextField display2 = new JTextField();
-    private static JTextField clockDisplay =new JTextField();
+    private static final JTextField display1 =new JTextField();
+    private static final JTextField display2 = new JTextField();
+    private static final JTextField clockDisplay =new JTextField();
 
-    private static JButton offButton = new JButton("OFF");
-    private static JButton autoButton = new JButton("AUTO");
-    private static JButton manualButton = new JButton("MANUAL");
-    private static JButton doseButton = new JButton("DOSE");
+    private static final JButton offButton = new JButton("OFF");
+    private static final JButton autoButton = new JButton("AUTO");
+    private static final JButton manualButton = new JButton("MANUAL");
+    private static final JButton doseButton = new JButton("DOSE");
 
     private static State state;
     private static Sensor sensor;
