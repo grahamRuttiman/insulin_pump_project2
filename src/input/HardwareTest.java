@@ -1,8 +1,8 @@
 package input;
 
 public enum HardwareTest {
-    BATTERYLOW,
     OK,
+    BATTERYLOW,
     PUMPFAIL,
     SENSORFAIL,
     DELIVERYFAIL

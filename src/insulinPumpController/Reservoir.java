@@ -1,11 +1,11 @@
 package insulinPumpController;
 
-public class Reservior {
+public class Reservoir {
     int capacity = 100; // capacity of insulin reservoir in mL
     int insulinAvailable; // insulin reservoir level
     boolean reservoirPresent;
 
-        public Reservior(){
+        public Reservoir(){
             //Get insulin via MySQL
 //        this.insulinAvailable = get insulin from SQL;
     }
@@ -20,16 +20,14 @@ public class Reservior {
             saveInsulin();
     }
 
-    public void resetResoviour(){
-            insulinAvailable = 100;
+    public void resetReservoir(){
+            insulinAvailable = capacity;
             saveInsulin();
     }
 
     private void saveInsulin(){
             //Saveinsulin mySQL
     }
-
-
 
 
 }
