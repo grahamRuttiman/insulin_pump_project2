@@ -18,6 +18,7 @@ public class Controller {
     Reservior reservior = new Reservior();
 
 
+
     public static void compDose(){
 
         // SUGAR_LOW schema
@@ -66,8 +67,6 @@ public class Controller {
     }
 
     public static void main(String[] args) {
-
-
 
         Compdose compdose = new Compdose(r0, r1, r2);
         int computedDose = 0;
