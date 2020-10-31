@@ -45,6 +45,7 @@ public class Main {
         final JTextField bloodSugarDisplay = new JTextField();
         final JButton dosageButton = new JButton("Administer Dosage");
         final JTextField errorDisplay = new JTextField();
+        final JButton reservoirResetButton = new JButton("Replace Reservoir");
 
         //Reservoir Button
         reservoirButton.setBounds(0, 0, 150, 50);
@@ -139,7 +140,7 @@ public class Main {
         environmentGUI.add(bloodSugarDisplay);
 
         //Dosage Button
-        dosageButton.setBounds(75, 150, 300, 50);
+        dosageButton.setBounds(0, 150, 300, 50);
         dosageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -156,6 +157,17 @@ public class Main {
             }
         });
 
+        //Replace reservoir
+        reservoirResetButton.setBounds(300, 150, 150, 50);
+        reservoirResetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                controller.reservoir.resetReservoir();
+            }
+        });
+
+
+
 
         //error display
         errorDisplay.setBounds(75, 200, 300, 50);
@@ -166,6 +178,7 @@ public class Main {
         environmentGUI.add(hardwareButton);
         environmentGUI.add(testButton);
         environmentGUI.add(dosageButton);
+        environmentGUI.add(reservoirResetButton);
         environmentGUI.setSize(450, 300);
         environmentGUI.getContentPane().setBackground(Color.green);
         environmentGUI.setLayout(null);
@@ -361,7 +374,7 @@ public class Main {
             notEnoughInsulin();
             display1.setText("Not enough insulin please replace reservoir");
         } else {
-            display2.setText("Last reading at " + clock.getTimeNoS() + "Units administered: " + controller.compDose);
+            display2.setText("Last reading at " + clock.getTimeNoS() + ", Units administered: " + controller.compDose);
             controller.reservoir.useInsulin(controller.compDose);
             controller.sensor.lowerBloodSugar(controller.compDose);
             controller.compDose = 0;
@@ -441,6 +454,7 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 if (controller.compDose <= controller.reservoir.insulinAvailable){
                 alarm.alarmOn = false;
+                display1.setText("");
                 administerDosage();}
             }
         });
