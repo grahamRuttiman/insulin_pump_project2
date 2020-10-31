@@ -383,6 +383,7 @@ public class Main {
             display2.setText("Last dosage at " + clock.getTimeNoS() + ", Units administered: " + controller.compDose);
             controller.reservoir.useInsulin(controller.compDose);
             controller.sensor.lowerBloodSugar(controller.compDose);
+            controller.cumulativeDose += controller.compDose;
             controller.compDose = 0;
         }
     }

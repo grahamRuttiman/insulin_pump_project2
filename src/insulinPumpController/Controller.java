@@ -23,6 +23,8 @@ public class Controller {
     HardwareTest hardwareTest = HardwareTest.OK;
     Sensor sensor = new Sensor();
 
+    
+
 
     public void compDose() {
 
