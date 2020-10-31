@@ -23,12 +23,6 @@ public class Controller {
     HardwareTest hardwareTest = HardwareTest.OK;
     Sensor sensor = new Sensor();
 
-    public void administerInsulin(){
-        reservoir.useInsulin(compDose);
-        sensor.lowerBloodSugar(compDose);
-        compDose = 0;
-    }
-
 
     public void compDose() {
 

@@ -7,10 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
 import javax.swing.Timer;
-import javax.swing.text.NumberFormatter;
 import javax.swing.JSpinner;
+
 
 public class Main {
 
@@ -269,7 +268,6 @@ public class Main {
                             }
                             manualDoseStarted = false;
                             manualDoseTimer.stop();
-
                         }
                     });
                     manualDoseTimer.start();
@@ -313,16 +311,16 @@ public class Main {
         state = State.STARTUP;
         turnScreensOn();
         display1.setText("Starting Up");
-        clockDisplay.setText(clock.getTime());
+        clockDisplay.setText(clock.getTimeS());
         //TODO read from SQL
 
         //clock Timer update every second
         clockTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clockDisplay.setText(clock.getTime());
+                clockDisplay.setText(clock.getTimeS());
                 //Check if its a new day.
-                if (clock.getTime().equals("00:00:00")) {
+                if (clock.getTimeS().equals("00:00:00")) {
                     controller.cumulativeDose = 0;
                 }
             }
@@ -357,16 +355,18 @@ public class Main {
     }
 
     static void administerDosage() {
-        String insulinString;
         if (controller.compDose == 0) {
-            insulinString = "No Insulin Administered";
+            display2.setText("Last reading at " + clock.getTimeNoS() + ",\n\r " + "No Insulin Administered");
+        } else if (controller.compDose > controller.reservoir.insulinAvailable){
+            notEnoughInsulin();
+            display1.setText("Not enough insulin please replace reservoir");
         } else {
-            insulinString = "Units administered: " + controller.compDose;
+            display2.setText("Last reading at " + clock.getTimeNoS() + "Units administered: " + controller.compDose);
             controller.reservoir.useInsulin(controller.compDose);
             controller.sensor.lowerBloodSugar(controller.compDose);
             controller.compDose = 0;
         }
-        display2.setText("Last Reading at " + clock.getTime() + "\n" + insulinString + "\nBlood Sugar: " + controller.sensor.bloodSugar);
+
 
     }
 
@@ -387,13 +387,14 @@ public class Main {
             controller.compDose = 0;
             clockTimer.stop();
             turnScreensOff();
+            alarm.alarmOn = false;
             //Save values to SQL
         }
     }
 
     static void test() {
         if (controller.hardwareTest != HardwareTest.OK) {
-            alarm.alarmOn = true;
+
             setAlarm();
 
             if (!controller.needle.needlePresent) {
@@ -411,12 +412,12 @@ public class Main {
             }
         } else {
             alarm.alarmOn = false;
-            display1.setText("Test completed at " + clock.getTime() + ". No issues found.");
-
+            display1.setText("Last Test completed at " + clock.getTimeNoS() + ". No issues found.");
         }
     }
 
     static void setAlarm() {
+        alarm.alarmOn = true;
         Runnable r = new Runnable() {
             public void run() {
                 while (alarm.alarmOn) {
@@ -428,8 +429,22 @@ public class Main {
                 }
             }
         };
-        Thread t = new Thread(r);
-        t.start();
+        Thread thread = new Thread(r);
+        thread.start();
+    }
+
+    static void notEnoughInsulin(){
+        setAlarm();
+        //Check if insulin is available every 2 seconds
+        Timer insulinTimer = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (controller.compDose <= controller.reservoir.insulinAvailable){
+                alarm.alarmOn = false;
+                administerDosage();}
+            }
+        });
+        insulinTimer.start();
     }
 
 
