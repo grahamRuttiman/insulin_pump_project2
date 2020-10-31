@@ -7,7 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import javax.swing.Timer;
+import javax.swing.text.NumberFormatter;
 
 public class Main {
 
@@ -29,19 +31,28 @@ public class Main {
 
         //Environment GUI
         final JFrame environmentGUI = new JFrame("Environment GUI");
-        final JToggleButton reservoirButton = new JToggleButton("Reservoir");
-        final JToggleButton needleButton = new JToggleButton("Needle");
-        final JButton cycleHardWareButton = new JButton("Cycle Hardware");
-        final JTextField hardwareDisplay = new JTextField();
+        final JToggleButton reservoirButton = new JToggleButton("Reservoir Present");
+        final JToggleButton needleButton = new JToggleButton("Needle Present");
+        final JButton hardwareButton = new JButton("Hardware OK");
         final JButton testButton = new JButton("HardwareTest");
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(100);
+        formatter.setAllowsInvalid(false);
+        final JTextField insulinAvailableDisplay = new JTextField();
+        final JFormattedTextField insulinAvailableInput = new JFormattedTextField(formatter);
+        final JTextField bloodSugarDisplay = new JTextField();
+        final JFormattedTextField bloodSugarInput = new JFormattedTextField(formatter);
+        final JButton dosageButton = new JButton("Administer Dosage");
+        final JTextField errorDisplay = new JTextField();
 
         //Reservoir Button
-        reservoirButton.setBounds(0, 0, 150, 100);
-        reservoirButton.setBackground(Color.white);
+        reservoirButton.setBounds(0, 0, 150, 50);
         reservoirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
                 if (controller.reservoir.reservoirPresent) {
                     controller.reservoir.reservoirPresent = false;
                     reservoirButton.setText("Reservoir Missing");
@@ -53,8 +64,7 @@ public class Main {
         });
 
         //Needle Button
-        needleButton.setBounds(150, 0, 150, 100);
-        needleButton.setBackground(Color.white);
+        needleButton.setBounds(150, 0, 150, 50);
         needleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -69,55 +79,88 @@ public class Main {
             }
         });
 
-        //Hardware display button
-        hardwareDisplay.setBounds(150, 100, 150, 100);
         //Cycle Hardware Button
-        cycleHardWareButton.setBounds(0, 100, 150, 100);
-        cycleHardWareButton.setBackground(Color.white);
-        cycleHardWareButton.addActionListener(new ActionListener() {
+        hardwareButton.setBounds(300, 0, 150, 50);
+        hardwareButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (controller.hardwareTest == HardwareTest.OK) {
                     controller.hardwareTest = HardwareTest.BATTERYLOW;
-                    hardwareDisplay.setText("Battery Low");
+                    hardwareButton.setText("Battery Low");
                 } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
                     controller.hardwareTest = HardwareTest.PUMPFAIL;
-                    hardwareDisplay.setText("Pump Fail");
+                    hardwareButton.setText("Pump Fail");
                 } else if (controller.hardwareTest == HardwareTest.PUMPFAIL) {
                     controller.hardwareTest = HardwareTest.SENSORFAIL;
-                    hardwareDisplay.setText("Sensor Fail");
+                    hardwareButton.setText("Sensor Fail");
                 } else if (controller.hardwareTest == HardwareTest.SENSORFAIL) {
                     controller.hardwareTest = HardwareTest.DELIVERYFAIL;
-                    hardwareDisplay.setText("Delivery Fail");
+                    hardwareButton.setText("Delivery Fail");
                 } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL) {
                     controller.hardwareTest = HardwareTest.OK;
-                    hardwareDisplay.setText("Hardware OK");
+                    hardwareButton.setText("Hardware OK");
                 } else {
-                    hardwareDisplay.setText("Error");
+                    errorDisplay.setText("Hardware Button Error");
                 }
             }
         });
         //Test Button
-        testButton.setBounds(0, 200, 300, 100);
-        testButton.setBackground(Color.white);
+        testButton.setBounds(75, 50, 300, 50);
         testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (state == State.RUN) {
                     test();
                 } else {
-                    hardwareDisplay.setText("Set device to auto");
+                    errorDisplay.setText("Set device to auto");
                 }
 
             }
         });
 
+        //Insulin Available Display
+        insulinAvailableDisplay.setBounds(0, 100, 100, 50);
+        insulinAvailableDisplay.setText("Insulin Available: ");
+        //Insulin Input
+        insulinAvailableInput.setBounds(100, 100, 100, 50);
+
+        //Insulin Available Display
+        bloodSugarDisplay.setBounds(250, 100, 100, 50);
+        bloodSugarDisplay.setText("Dosage: ");
+        //Insulin Input
+        bloodSugarInput.setBounds(350, 100, 100, 50);
+
+        //Dosage Button
+        dosageButton.setBounds(75, 150, 300, 50);
+        dosageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //FIXME
+                //TODO test inputs and get them to work on the controller.
+                if (insulinAvailableDisplay != null) {
+                    controller.reservoir.insulinAvailable = Integer.getInteger(insulinAvailableInput.getText());
+                }
+                if (bloodSugarInput != null) {
+                    controller.sensor.bloodSugar = Integer.getInteger(bloodSugarDisplay.toString());
+                }
+
+
+            }
+        });
+
+        //error display
+        errorDisplay.setBounds(75, 200, 300, 50);
         environmentGUI.add(reservoirButton);
         environmentGUI.add(needleButton);
-        environmentGUI.add(cycleHardWareButton);
-        environmentGUI.add(hardwareDisplay);
+        environmentGUI.add(hardwareButton);
         environmentGUI.add(testButton);
-        environmentGUI.setSize(300, 300);
+        environmentGUI.add(insulinAvailableDisplay);
+        environmentGUI.add(insulinAvailableInput);
+        environmentGUI.add(bloodSugarDisplay);
+        environmentGUI.add(bloodSugarInput);
+        environmentGUI.add(dosageButton);
+        environmentGUI.add(errorDisplay);
+        environmentGUI.setSize(450, 300);
         environmentGUI.getContentPane().setBackground(Color.green);
         environmentGUI.setLayout(null);
         environmentGUI.setVisible(true);
@@ -264,7 +307,7 @@ public class Main {
         turnScreensOn();
         display1.setText("Starting Up");
         clockDisplay.setText(clock.getTime());
-        //Read values out of SQL
+        //TODO read from SQL
 
         //clock Timer update every second
         clockTimer = new Timer(1000, new ActionListener() {
@@ -355,7 +398,7 @@ public class Main {
             }
         } else {
             alarm.alarmOn = false;
-            display1.setText("");
+            display1.setText("Test completed at " + clock.getTime() + ". No issues found.");
 
         }
     }
