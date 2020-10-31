@@ -167,8 +167,6 @@ public class Main {
         });
 
 
-
-
         //error display
         errorDisplay.setBounds(75, 200, 300, 50);
         environmentGUI.add(errorDisplay);
@@ -197,6 +195,7 @@ public class Main {
         display1.setBounds(25, 175, 335, 50);
         display2.setBounds(25, 75, 335, 100);
         clockDisplay.setBounds(25, 25, 335, 50);
+        clockDisplay.setHorizontalAlignment(JTextField.CENTER);
         turnScreensOff();
 
 
