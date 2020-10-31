@@ -9,10 +9,10 @@ public class Controller {
     final static int maxSingleDose = 4; // maximum amount of single dose
     final static int maxDailyDose = 25; // maximum amount of daily dose
     final static int minDose = 1; // minimum dose
-    public int compDose;
+    public int compDose = 0;
     public int cumulativeDose; // total dose in last 24 hours //Get from SQL
 
-    public static Sensor sensor;
+
     public static SugarLevel sugarLevel;
     private static int r2 = 0; // current sensor reading
     private static int r1 = safeMax; // previous sensor reading
@@ -21,11 +21,16 @@ public class Controller {
     Reservoir reservoir = new Reservoir();
     Needle needle = new Needle();
     HardwareTest hardwareTest = HardwareTest.OK;
+    Sensor sensor = new Sensor();
+
+    public void administerInsulin(){
+        reservoir.useInsulin(compDose);
+        sensor.lowerBloodSugar(compDose);
+        compDose = 0;
+    }
 
 
     public void compDose() {
-
-        compDose = 0;
 
         r0 = r1;
         r1 = r2;
@@ -88,6 +93,6 @@ public class Controller {
         }
 
     }
-    
+
 
 }

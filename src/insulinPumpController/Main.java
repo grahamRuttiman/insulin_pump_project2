@@ -2,6 +2,7 @@ package insulinPumpController;
 
 
 import input.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import javax.swing.Timer;
 
 public class Main {
 
+    static boolean manualDoseTimer = false;
 
     //Classes
     static State state;
@@ -17,28 +19,28 @@ public class Main {
     static Controller controller = new Controller();
     static Alarm alarm = new Alarm();
 
-    static final JTextField display1 =new JTextField();
+    static final JTextField display1 = new JTextField();
     static final JTextField display2 = new JTextField();
-    static final JTextField clockDisplay =new JTextField();
+    static final JTextField clockDisplay = new JTextField();
 
-    static void environmentGUI(){
+    static void environmentGUI() {
 
         //Environment GUI
         final JFrame environmentGUI = new JFrame("Environment GUI");
-        final JButton reservoirButton = new JButton("Reservoir");
-        final JButton needleButton = new JButton("Needle");
+        final JToggleButton reservoirButton = new JToggleButton("Reservoir");
+        final JToggleButton needleButton = new JToggleButton("Needle");
         final JButton cycleHardWareButton = new JButton("Cycle Hardware");
-        final JTextField hardwareDisplay =new JTextField();
+        final JTextField hardwareDisplay = new JTextField();
         final JButton testButton = new JButton("HardwareTest");
 
         //Reservoir Button
-        reservoirButton.setBounds(0,0,150,100);
+        reservoirButton.setBounds(0, 0, 150, 100);
         reservoirButton.setBackground(Color.white);
         reservoirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                if (controller.reservoir.reservoirPresent){
+                if (controller.reservoir.reservoirPresent) {
                     controller.reservoir.reservoirPresent = false;
                     reservoirButton.setText("Reservoir Missing");
                 } else {
@@ -49,13 +51,13 @@ public class Main {
         });
 
         //Needle Button
-        needleButton.setBounds(150,0,150,100);
+        needleButton.setBounds(150, 0, 150, 100);
         needleButton.setBackground(Color.white);
         needleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                if (controller.needle.needlePresent){
+                if (controller.needle.needlePresent) {
                     controller.needle.needlePresent = false;
                     needleButton.setText("Needle Missing");
                 } else {
@@ -64,27 +66,28 @@ public class Main {
                 }
             }
         });
+
         //Hardware display button
-        hardwareDisplay.setBounds(150,100, 150,100);
+        hardwareDisplay.setBounds(150, 100, 150, 100);
         //Cycle Hardware Button
-        cycleHardWareButton.setBounds(0,100,150,100);
+        cycleHardWareButton.setBounds(0, 100, 150, 100);
         cycleHardWareButton.setBackground(Color.white);
         cycleHardWareButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (controller.hardwareTest == HardwareTest.OK){
+                if (controller.hardwareTest == HardwareTest.OK) {
                     controller.hardwareTest = HardwareTest.BATTERYLOW;
                     hardwareDisplay.setText("Battery Low");
-                } else if (controller.hardwareTest == HardwareTest.BATTERYLOW){
+                } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
                     controller.hardwareTest = HardwareTest.PUMPFAIL;
                     hardwareDisplay.setText("Pump Fail");
-                } else if (controller.hardwareTest == HardwareTest.PUMPFAIL){
+                } else if (controller.hardwareTest == HardwareTest.PUMPFAIL) {
                     controller.hardwareTest = HardwareTest.SENSORFAIL;
                     hardwareDisplay.setText("Sensor Fail");
-                } else if (controller.hardwareTest == HardwareTest.SENSORFAIL){
+                } else if (controller.hardwareTest == HardwareTest.SENSORFAIL) {
                     controller.hardwareTest = HardwareTest.DELIVERYFAIL;
                     hardwareDisplay.setText("Delivery Fail");
-                } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL){
+                } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL) {
                     controller.hardwareTest = HardwareTest.OK;
                     hardwareDisplay.setText("Hardware OK");
                 } else {
@@ -93,12 +96,12 @@ public class Main {
             }
         });
         //Test Button
-        testButton.setBounds(0,200,300,100);
+        testButton.setBounds(0, 200, 300, 100);
         testButton.setBackground(Color.white);
         testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (state == State.RUN){
+                if (state == State.RUN) {
                     test();
                 } else {
                     hardwareDisplay.setText("Set device to auto");
@@ -112,7 +115,7 @@ public class Main {
         environmentGUI.add(cycleHardWareButton);
         environmentGUI.add(hardwareDisplay);
         environmentGUI.add(testButton);
-        environmentGUI.setSize(300,300);
+        environmentGUI.setSize(300, 300);
         environmentGUI.getContentPane().setBackground(Color.green);
         environmentGUI.setLayout(null);
         environmentGUI.setVisible(true);
@@ -127,14 +130,14 @@ public class Main {
         final JButton manualButton = new JButton("MANUAL");
         final JButton doseButton = new JButton("DOSE");
 
-        display1.setBounds(25,175, 335,50);
-        display2.setBounds(25,75, 335,100);
-        clockDisplay.setBounds(25,25, 335,50);
+        display1.setBounds(25, 175, 335, 50);
+        display2.setBounds(25, 75, 335, 100);
+        clockDisplay.setBounds(25, 25, 335, 50);
         turnScreensOff();
 
 
         // Off Button
-        offButton.setBounds(250,250,95,30);
+        offButton.setBounds(250, 250, 95, 30);
         offButton.setBackground(Color.gray);
         offButton.addActionListener(new ActionListener() {
             @Override
@@ -152,7 +155,7 @@ public class Main {
         });
 
         // Auto Button
-        autoButton.setBounds(250,350,95,30);
+        autoButton.setBounds(250, 350, 95, 30);
         autoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -160,7 +163,7 @@ public class Main {
                 manualButton.setBackground(Color.white);
                 autoButton.setBackground(Color.gray);
 
-                if (state == State.OFF){
+                if (state == State.OFF) {
                     startUp();
                     run();
                 } else {
@@ -171,7 +174,7 @@ public class Main {
         });
 
         // Manual Button
-        manualButton.setBounds(250,300,95,30);
+        manualButton.setBounds(250, 300, 95, 30);
         manualButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -179,7 +182,7 @@ public class Main {
                 manualButton.setBackground(Color.gray);
                 autoButton.setBackground(Color.white);
 
-                if (state == State.OFF){
+                if (state == State.OFF) {
                     startUp();
                     manual();
                 } else {
@@ -189,14 +192,36 @@ public class Main {
         });
 
 
-
         // Manual Dose Button
-        doseButton.setBounds(50,300,95,30);
+        doseButton.setBounds(50, 300, 95, 30);
         doseButton.setBackground(Color.green);
         doseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                // updateDosage();
+
+                if (state != State.MANUAL){
+                    display1.setText("Must be in manual mode");
+
+                    //Manual dosage in 5 second period
+                } else if (!manualDoseTimer){
+                    display1.setText("Manual Dosage Activated");
+                    manualDoseTimer = true;
+                    Timer clockTimer = new Timer(5000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (controller.compDose > controller.reservoir.insulinAvailable){
+                                display1.setText("Not enough Insulin");
+                            } else {
+                            display1.setText(controller.compDose + " units of Insulin Administered");
+                            controller.administerInsulin();
+                            manualDoseTimer = false;}
+                        }
+                    });
+                    clockTimer.start();
+                } else {
+                    controller.compDose += 1;
+                    display1.setText("Manual Dosgae Units: " + controller.compDose);
+                }
 
             }
         });
@@ -209,26 +234,27 @@ public class Main {
         insulinPumpGUI.add(offButton);
         insulinPumpGUI.add(manualButton);
         insulinPumpGUI.add(autoButton);
-        insulinPumpGUI.setSize(400,500);
+        insulinPumpGUI.setSize(400, 500);
         insulinPumpGUI.getContentPane().setBackground(Color.blue);
         insulinPumpGUI.setLayout(null);
         insulinPumpGUI.setVisible(true);
 
     }
 
-    static void turnScreensOff(){
+    static void turnScreensOff() {
         display1.setBackground(Color.gray);
         display2.setBackground(Color.gray);
         clockDisplay.setBackground(Color.gray);
     }
-    static void turnScreensOn(){
+
+    static void turnScreensOn() {
         display1.setBackground(Color.white);
         display2.setBackground(Color.white);
         clockDisplay.setBackground(Color.white);
     }
 
 
-    static void startUp(){
+    static void startUp() {
         state = State.STARTUP;
         turnScreensOn();
         display1.setText("Starting Up");
@@ -241,7 +267,7 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 clockDisplay.setText(clock.getTime());
                 //Check if its a new day.
-                if (clock.getTime().equals("00:00:00")){
+                if (clock.getTime().equals("00:00:00")) {
                     controller.cumulativeDose = 0;
                 }
             }
@@ -260,7 +286,7 @@ public class Main {
         testTimer.start();
     }
 
-    static void run(){
+    static void run() {
         state = State.RUN;
         display1.setText("Automatic Mode");
 
@@ -270,11 +296,12 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 controller.compDose();
                 //Warnings about sugar level - alarm?
-                if (controller.compDose == 0){
+                if (controller.compDose == 0) {
                     //Send update that nothing happened?
-                } else if (controller.compDose > 0){
+                } else if (controller.compDose > 0) {
                     controller.reservoir.useInsulin(controller.compDose);
                     //Send update to terminal
+                    controller.compDose = 0;
                 }
 
             }
@@ -282,9 +309,10 @@ public class Main {
         sensorTimer.start();
     }
 
-    static void manual(){
+    static void manual() {
         state = State.MANUAL;
         display1.setText("Manual Mode");
+
     }
 
     static void reset() {
@@ -319,29 +347,31 @@ public class Main {
         } else {
             alarm.alarmOn = false;
             display1.setText("");
+
         }
     }
 
-    static void setAlarm(){
+    static void setAlarm() {
         Runnable r = new Runnable() {
             public void run() {
                 while (alarm.alarmOn) {
                     Toolkit.getDefaultToolkit().beep();
                     try {
-                        Thread.sleep( 2000 );
+                        Thread.sleep(2000);
+                    } catch (InterruptedException x) {
                     }
-                    catch ( InterruptedException x ) {}
                 }
             }
         };
-        Thread t = new Thread( r );
+        Thread t = new Thread(r);
         t.start();
     }
 
 
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         insulinPumpGUI();
         environmentGUI();
         state = State.OFF;
-} }
+    }
+
+}

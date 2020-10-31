@@ -2,16 +2,19 @@ package input;
 
 public class Sensor {
 
-    int reading;
+    public int bloodSugar; //placeholder value
 
     public Sensor(){
-        //Get Reading from SQL
-//        this.reading = sensor_reading;
+        this.bloodSugar = 10;
     }
 
     public int getReading(){
+        return bloodSugar;
+    }
 
-        return reading;
+    public void lowerBloodSugar(int compDose){
+       bloodSugar -= compDose;
+       //Save the SQL
     }
 
 }
