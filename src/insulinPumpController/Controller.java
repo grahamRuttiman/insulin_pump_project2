@@ -1,6 +1,7 @@
 package insulinPumpController;
 
 import input.*;
+import java.sql.*;
 
 public class Controller {
 
@@ -90,13 +91,48 @@ public class Controller {
 
     }
 
+    public void connectDB(){
+
+    }
     //TODO fill these functions out
     public void readFromDatabase(){
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            //Connect the the database
+            Connection con=DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/@localhost", "root", "root");
+            //Create a Statement
+            Statement statement = con.createStatement();
+            //Execute MySQL query
+            ResultSet resultSet = statement.executeQuery("select cumDose from table"); //select value from table
+            //Process the result set
+            while(resultSet.next()){
+                cumulativeDose = resultSet.getInt("cumDose");
+            }
+            System.out.println(cumulativeDose);
+
+            con.close();
+        } catch(Exception e){System.out.println(e);}
 
     }
 
     public void writeToDatabase(){
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            //Connect the the database
+            Connection con=DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/@localhost", "root", "root");
+            //Create a Statement
+            Statement statement = con.createStatement();
 
+            //Execute MySQL query
+            String sql = "update tablesname set cumDose ='" + cumulativeDose + "' where id = 1";
+            statement.executeUpdate(sql);
+
+            System.out.println("saved to database");
+
+            con.close();
+        } catch(Exception e){System.out.println(e);}
     }
 
 }
