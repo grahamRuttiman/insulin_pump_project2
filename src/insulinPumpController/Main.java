@@ -326,10 +326,13 @@ public class Main {
     }
 
     static void off() {
-        state = State.OFF;
-        clockTimer.stop();
-        turnScreensOff();
-        //Save values to SQL
+        if (state != State.OFF){
+            state = State.OFF;
+            controller.compDose = 0;
+            clockTimer.stop();
+            turnScreensOff();
+            //Save values to SQL
+        }
     }
 
     static void test() {
