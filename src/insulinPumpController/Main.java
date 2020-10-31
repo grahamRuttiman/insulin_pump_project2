@@ -330,6 +330,7 @@ public class Main {
         turnScreensOn();
         display1.setText("Starting Up");
         clockDisplay.setText(clock.getTimeS());
+        //controller.readFromDatabase();
         //TODO read from SQL
 
         //clock Timer update every second
@@ -414,7 +415,8 @@ public class Main {
             }
             turnScreensOff();
             alarm.alarmOn = false;
-            //Save values to SQL
+//            controller.writeToDatabase();
+            //TODO save values to SQL
         }
     }
 

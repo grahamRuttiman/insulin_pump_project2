@@ -88,5 +88,13 @@ public class Controller {
 
     }
 
+    //TODO fill these functions out
+    public void readFromDatabase(){
+
+    }
+
+    public void writeToDatabase(){
+
+    }
 
 }
