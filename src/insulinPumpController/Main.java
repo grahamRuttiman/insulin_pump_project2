@@ -37,7 +37,7 @@ public class Main {
         final JButton hardwareButton = new JButton("Hardware OK");
         final JButton testButton = new JButton("HardwareTest");
 
-        SpinnerNumberModel model = new SpinnerNumberModel(50, 0, 100, 1);
+        SpinnerNumberModel model = new SpinnerNumberModel(controller.reservoir.insulinAvailable, 0, controller.reservoir.capacity, 1);
         SpinnerNumberModel model2 = new SpinnerNumberModel(5, 0, 100, 1);
         final JTextField insulinAvailableDisplay = new JTextField();
         JSpinner insulinAvailableSpinner = new JSpinner(model);
@@ -145,12 +145,14 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                int dosage = (Integer) dosageSpinner.getValue();
+                controller.compDose = (Integer) dosageSpinner.getValue();
                 controller.reservoir.insulinAvailable = (Integer) insulinAvailableSpinner.getValue();
 
-                if (dosage > 0) {
-                    controller.compDose = dosage;
-                    controller.administerInsulin();
+                if (state != State.RUN) {
+                    errorDisplay.setText("Must be in auto mode");
+                } else {
+                    administerDosage();
+                    bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
                 }
             }
         });
@@ -263,7 +265,7 @@ public class Main {
                                 display1.setText("Not enough Insulin");
                             } else {
                                 display1.setText(controller.compDose + " units of Insulin Administered");
-                                controller.administerInsulin();
+                                administerDosage();
                             }
                             manualDoseStarted = false;
                             manualDoseTimer.stop();
@@ -348,18 +350,24 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.compDose();
-                //Warnings about sugar level - alarm?
-                if (controller.compDose == 0) {
-                    //Send update that nothing happened?
-                } else if (controller.compDose > 0) {
-                    controller.reservoir.useInsulin(controller.compDose);
-                    //Send update to terminal
-                    controller.compDose = 0;
-                }
-
+                administerDosage();
             }
         });
         sensorTimer.start();
+    }
+
+    static void administerDosage() {
+        String insulinString;
+        if (controller.compDose == 0) {
+            insulinString = "No Insulin Administered";
+        } else {
+            insulinString = "Units administered: " + controller.compDose;
+            controller.reservoir.useInsulin(controller.compDose);
+            controller.sensor.lowerBloodSugar(controller.compDose);
+            controller.compDose = 0;
+        }
+        display2.setText("Last Reading at " + clock.getTime() + "\n" + insulinString + "\nBlood Sugar: " + controller.sensor.bloodSugar);
+
     }
 
     static void manual() {
