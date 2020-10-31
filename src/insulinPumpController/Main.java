@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import javax.swing.Timer;
 import javax.swing.text.NumberFormatter;
+import javax.swing.JSpinner;
 
 public class Main {
 
@@ -35,16 +36,14 @@ public class Main {
         final JToggleButton needleButton = new JToggleButton("Needle Present");
         final JButton hardwareButton = new JButton("Hardware OK");
         final JButton testButton = new JButton("HardwareTest");
-        NumberFormat format = NumberFormat.getInstance();
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Integer.class);
-        formatter.setMinimum(0);
-        formatter.setMaximum(100);
-        formatter.setAllowsInvalid(false);
+
+        SpinnerNumberModel model = new SpinnerNumberModel(50, 0, 100, 1);
+        SpinnerNumberModel model2 = new SpinnerNumberModel(5, 0, 100, 1);
         final JTextField insulinAvailableDisplay = new JTextField();
-        final JFormattedTextField insulinAvailableInput = new JFormattedTextField(formatter);
+        JSpinner insulinAvailableSpinner = new JSpinner(model);
+        final JTextField dosageDisplay = new JTextField();
+        JSpinner dosageSpinner = new JSpinner(model2);
         final JTextField bloodSugarDisplay = new JTextField();
-        final JFormattedTextField bloodSugarInput = new JFormattedTextField(formatter);
         final JButton dosageButton = new JButton("Administer Dosage");
         final JTextField errorDisplay = new JTextField();
 
@@ -118,48 +117,54 @@ public class Main {
             }
         });
 
-        //Insulin Available Display
+        //Insulin Display
         insulinAvailableDisplay.setBounds(0, 100, 100, 50);
         insulinAvailableDisplay.setText("Insulin Available: ");
+        insulinAvailableDisplay.setHorizontalAlignment(JTextField.RIGHT);
+        environmentGUI.add(insulinAvailableDisplay);
         //Insulin Input
-        insulinAvailableInput.setBounds(100, 100, 100, 50);
-
-        //Insulin Available Display
-        bloodSugarDisplay.setBounds(250, 100, 100, 50);
-        bloodSugarDisplay.setText("Dosage: ");
-        //Insulin Input
-        bloodSugarInput.setBounds(350, 100, 100, 50);
+        insulinAvailableSpinner.setBounds(100, 100, 50, 50);
+        environmentGUI.add(insulinAvailableSpinner);
+        //Dosage Display
+        dosageDisplay.setBounds(150, 100, 100, 50);
+        dosageDisplay.setText("Dosage: ");
+        dosageDisplay.setHorizontalAlignment(JTextField.RIGHT);
+        environmentGUI.add(dosageDisplay);
+        //Dosage Input
+        dosageSpinner.setBounds(250, 100, 50, 50);
+        environmentGUI.add(dosageSpinner);
+        //Blood Sugar display
+        bloodSugarDisplay.setBounds(300, 100, 150, 50);
+        bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
+        bloodSugarDisplay.setHorizontalAlignment(JTextField.CENTER);
+        environmentGUI.add(bloodSugarDisplay);
 
         //Dosage Button
         dosageButton.setBounds(75, 150, 300, 50);
         dosageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //FIXME
-                //TODO test inputs and get them to work on the controller.
-                if (insulinAvailableDisplay != null) {
-                    controller.reservoir.insulinAvailable = Integer.getInteger(insulinAvailableInput.getText());
-                }
-                if (bloodSugarInput != null) {
-                    controller.sensor.bloodSugar = Integer.getInteger(bloodSugarDisplay.toString());
-                }
 
+                int dosage = (Integer) dosageSpinner.getValue();
+                controller.reservoir.insulinAvailable = (Integer) insulinAvailableSpinner.getValue();
 
+                if (dosage > 0) {
+                    controller.compDose = dosage;
+                    controller.administerInsulin();
+                }
             }
         });
 
+
         //error display
         errorDisplay.setBounds(75, 200, 300, 50);
+        environmentGUI.add(errorDisplay);
+
         environmentGUI.add(reservoirButton);
         environmentGUI.add(needleButton);
         environmentGUI.add(hardwareButton);
         environmentGUI.add(testButton);
-        environmentGUI.add(insulinAvailableDisplay);
-        environmentGUI.add(insulinAvailableInput);
-        environmentGUI.add(bloodSugarDisplay);
-        environmentGUI.add(bloodSugarInput);
         environmentGUI.add(dosageButton);
-        environmentGUI.add(errorDisplay);
         environmentGUI.setSize(450, 300);
         environmentGUI.getContentPane().setBackground(Color.green);
         environmentGUI.setLayout(null);
@@ -244,21 +249,21 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                if (state != State.MANUAL){
+                if (state != State.MANUAL) {
                     display1.setText("Must be in manual mode");
 
                     //Manual dosage in 5 second period
-                } else if (!manualDoseStarted){
+                } else if (!manualDoseStarted) {
                     display1.setText("Manual Dosage Activated");
                     manualDoseStarted = true;
                     manualDoseTimer = new Timer(5000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (controller.compDose > controller.reservoir.insulinAvailable){
+                            if (controller.compDose > controller.reservoir.insulinAvailable) {
                                 display1.setText("Not enough Insulin");
                             } else {
-                            display1.setText(controller.compDose + " units of Insulin Administered");
-                            controller.administerInsulin();
+                                display1.setText(controller.compDose + " units of Insulin Administered");
+                                controller.administerInsulin();
                             }
                             manualDoseStarted = false;
                             manualDoseTimer.stop();
@@ -369,7 +374,7 @@ public class Main {
     }
 
     static void off() {
-        if (state != State.OFF){
+        if (state != State.OFF) {
             state = State.OFF;
             controller.compDose = 0;
             clockTimer.stop();
