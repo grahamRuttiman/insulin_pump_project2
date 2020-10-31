@@ -23,6 +23,9 @@ CREATE TABLE IF NOT EXISTS `mydb`.`error` (
   PRIMARY KEY (`Error_ID`))
 ENGINE = InnoDB;
 
+INSERT INTO error(Error_ID, Error_message)
+VALUES(1,'ERROR! insulin stopped');
+
 
 -- -----------------------------------------------------
 -- Table `mydb`.`patient`
@@ -42,6 +45,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`patient` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+INSERT INTO patient(Patient_ID, Dose_1, Dose_2, Dose_3, Error_ID)
+VALUES(1, 1, 2, 3, 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
