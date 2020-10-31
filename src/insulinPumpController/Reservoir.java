@@ -3,7 +3,7 @@ package insulinPumpController;
 public class Reservoir {
     int capacity = 100; // capacity of insulin reservoir in mL
     int insulinAvailable = 10; // placeholder read from SQL
-    boolean reservoirPresent;
+    boolean reservoirPresent = true;
 
         public Reservoir(){
             //Get insulin via MySQL

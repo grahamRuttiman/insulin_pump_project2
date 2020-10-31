@@ -14,7 +14,10 @@ public class Sensor {
 
     public void lowerBloodSugar(int compDose){
        bloodSugar -= compDose;
-       //Save the SQL
+       if (bloodSugar < 0){
+           bloodSugar = 0;
+       }
+       //TODO save to SQL
     }
 
 }

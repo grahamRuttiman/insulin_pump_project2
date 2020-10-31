@@ -152,6 +152,7 @@ public class Main {
                     errorDisplay.setText("Must be in auto mode");
                 } else {
                     administerDosage();
+                    insulinAvailableSpinner.setValue(controller.reservoir.insulinAvailable);
                     bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
                 }
             }
@@ -162,7 +163,7 @@ public class Main {
         reservoirResetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                controller.reservoir.resetReservoir();
+                reset();
             }
         });
 
@@ -275,7 +276,6 @@ public class Main {
                             if (controller.compDose > controller.reservoir.insulinAvailable) {
                                 display1.setText("Not enough Insulin");
                             } else {
-                                display1.setText(controller.compDose + " units of Insulin Administered");
                                 administerDosage();
                             }
                             manualDoseStarted = false;
@@ -369,17 +369,15 @@ public class Main {
     static void administerDosage() {
         if (controller.compDose == 0) {
             display2.setText("Last reading at " + clock.getTimeNoS() + ",\n\r " + "No Insulin Administered");
-        } else if (controller.compDose > controller.reservoir.insulinAvailable){
+        } else if (controller.compDose > controller.reservoir.insulinAvailable) {
             notEnoughInsulin();
             display1.setText("Not enough insulin please replace reservoir");
         } else {
-            display2.setText("Last reading at " + clock.getTimeNoS() + ", Units administered: " + controller.compDose);
+            display2.setText("Last dosage at " + clock.getTimeNoS() + ", Units administered: " + controller.compDose);
             controller.reservoir.useInsulin(controller.compDose);
             controller.sensor.lowerBloodSugar(controller.compDose);
             controller.compDose = 0;
         }
-
-
     }
 
     static void manual() {
@@ -391,6 +389,7 @@ public class Main {
     static void reset() {
         state = State.RESET;
         controller.reservoir.resetReservoir();
+        display1.setText("Insulin Reservoir Replaced");
     }
 
     static void off() {
@@ -405,13 +404,17 @@ public class Main {
     }
 
     static void test() {
-        if (controller.hardwareTest != HardwareTest.OK) {
-
+        if (controller.hardwareTest != HardwareTest.OK || !controller.needle.needlePresent || !controller.reservoir.reservoirPresent) {
+            alarm.alarmOn = true;
             setAlarm();
 
             if (!controller.needle.needlePresent) {
                 display1.setText("No Needle Uni");
-            } else if (!controller.reservoir.reservoirPresent) {
+            }
+            if (!controller.reservoir.reservoirPresent) {
+                display1.setText("No reservoir");
+            }
+            if (!controller.reservoir.reservoirPresent) {
                 display1.setText("No Insulin");
             } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
                 display1.setText("Battery Low");
@@ -423,7 +426,6 @@ public class Main {
                 display1.setText("Delivery Failure");
             }
         } else {
-            alarm.alarmOn = false;
             display1.setText("Last Test completed at " + clock.getTimeNoS() + ". No issues found.");
         }
     }
@@ -445,16 +447,17 @@ public class Main {
         thread.start();
     }
 
-    static void notEnoughInsulin(){
+    static void notEnoughInsulin() {
         setAlarm();
         //Check if insulin is available every 2 seconds
         Timer insulinTimer = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (controller.compDose <= controller.reservoir.insulinAvailable){
-                alarm.alarmOn = false;
-                display1.setText("");
-                administerDosage();}
+                if (controller.compDose <= controller.reservoir.insulinAvailable) {
+                    alarm.alarmOn = false;
+                    display1.setText("");
+                    administerDosage();
+                }
             }
         });
         insulinTimer.start();
