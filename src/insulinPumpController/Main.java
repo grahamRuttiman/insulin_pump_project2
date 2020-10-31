@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.Timer;
 import javax.swing.JSpinner;
 
@@ -14,8 +15,13 @@ import javax.swing.JSpinner;
 public class Main {
 
     static boolean manualDoseStarted = false;
+    static boolean bufferStarted = false;
     static Timer clockTimer;
     static Timer manualDoseTimer;
+    static Timer messageBufferTimer;
+    static Timer testTimer;
+    static int bufferPosition = 0;
+
 
     //Classes
     static State state;
@@ -340,7 +346,7 @@ public class Main {
         clockTimer.start();
 
         //Self Test Timer every 30 seconds
-        Timer testTimer = new Timer(30000, new ActionListener() {
+        testTimer = new Timer(30000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 state = State.TEST;
@@ -396,7 +402,16 @@ public class Main {
         if (state != State.OFF) {
             state = State.OFF;
             controller.compDose = 0;
+
             clockTimer.stop();
+            testTimer.stop();
+
+            if (manualDoseStarted){
+                manualDoseTimer.stop();
+            }
+            if (bufferStarted){
+                messageBufferTimer.stop();
+            }
             turnScreensOff();
             alarm.alarmOn = false;
             //Save values to SQL
@@ -404,30 +419,62 @@ public class Main {
     }
 
     static void test() {
-        if (controller.hardwareTest != HardwareTest.OK || !controller.needle.needlePresent || !controller.reservoir.reservoirPresent) {
-            alarm.alarmOn = true;
-            setAlarm();
 
+        if (controller.hardwareTest != HardwareTest.OK || !controller.needle.needlePresent || !controller.reservoir.reservoirPresent) {
+            if (!alarm.alarmOn){
+                setAlarm();
+            }
+            ArrayList<String> bufferArray = new ArrayList<String>();
             if (!controller.needle.needlePresent) {
-                display1.setText("No Needle Uni");
+                bufferArray.add("No needle found");
             }
             if (!controller.reservoir.reservoirPresent) {
-                display1.setText("No reservoir");
+                bufferArray.add("No reservoir found");
             }
-            if (!controller.reservoir.reservoirPresent) {
-                display1.setText("No Insulin");
-            } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
-                display1.setText("Battery Low");
+            if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
+                bufferArray.add("Battery Low");
             } else if (controller.hardwareTest == HardwareTest.PUMPFAIL) {
-                display1.setText("Pump Failure");
+                bufferArray.add("Pump failure");
             } else if (controller.hardwareTest == HardwareTest.SENSORFAIL) {
-                display1.setText("Sensor Failure");
+                bufferArray.add("Sensor failure");
             } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL) {
-                display1.setText("Delivery Failure");
+                bufferArray.add("Delivery Failure");
+            }
+            if (bufferArray.size() == 1) {
+                display1.setText(bufferArray.get(0));
+            } else {
+                messageBuffer(bufferArray);
             }
         } else {
-            display1.setText("Last Test completed at " + clock.getTimeNoS() + ". No issues found.");
+            alarm.alarmOn = false;
+            display1.setText("Last Test completed at " + clock.getTimeS() + ". No issues found.");
         }
+
+    }
+
+    static void messageBuffer(ArrayList<String> bufferArray) {
+        //Cycle through message every 5 seconds
+        bufferPosition = 0;
+        display1.setText(bufferArray.get(0));
+        bufferPosition++;
+        bufferStarted = true;
+
+        messageBufferTimer = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (alarm.alarmOn){
+                    if (bufferPosition == bufferArray.size()) {
+                        bufferPosition = 0;
+                    }
+                    display1.setText(bufferArray.get(bufferPosition));
+                    bufferPosition++;
+                } else {
+                    messageBufferTimer.stop();
+                    bufferStarted = false;
+                }
+            }
+        });
+        messageBufferTimer.start();
     }
 
     static void setAlarm() {
