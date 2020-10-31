@@ -11,7 +11,9 @@ import javax.swing.Timer;
 
 public class Main {
 
-    static boolean manualDoseTimer = false;
+    static boolean manualDoseStarted = false;
+    static Timer clockTimer;
+    static Timer manualDoseTimer;
 
     //Classes
     static State state;
@@ -167,7 +169,7 @@ public class Main {
                     startUp();
                     run();
                 } else {
-                    manual();
+                    run();
                 }
 
             }
@@ -203,10 +205,10 @@ public class Main {
                     display1.setText("Must be in manual mode");
 
                     //Manual dosage in 5 second period
-                } else if (!manualDoseTimer){
+                } else if (!manualDoseStarted){
                     display1.setText("Manual Dosage Activated");
-                    manualDoseTimer = true;
-                    Timer clockTimer = new Timer(5000, new ActionListener() {
+                    manualDoseStarted = true;
+                    manualDoseTimer = new Timer(5000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             if (controller.compDose > controller.reservoir.insulinAvailable){
@@ -214,10 +216,13 @@ public class Main {
                             } else {
                             display1.setText(controller.compDose + " units of Insulin Administered");
                             controller.administerInsulin();
-                            manualDoseTimer = false;}
+                            }
+                            manualDoseStarted = false;
+                            manualDoseTimer.stop();
+
                         }
                     });
-                    clockTimer.start();
+                    manualDoseTimer.start();
                 } else {
                     controller.compDose += 1;
                     display1.setText("Manual Dosgae Units: " + controller.compDose);
@@ -262,7 +267,7 @@ public class Main {
         //Read values out of SQL
 
         //clock Timer update every second
-        Timer clockTimer = new Timer(1000, new ActionListener() {
+        clockTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clockDisplay.setText(clock.getTime());
@@ -322,8 +327,9 @@ public class Main {
 
     static void off() {
         state = State.OFF;
+        clockTimer.stop();
         turnScreensOff();
-        //Save values to thing
+        //Save values to SQL
     }
 
     static void test() {
