@@ -97,11 +97,11 @@ public class Controller {
             Class.forName("com.mysql.cj.jdbc.Driver");
             //Connect the the database
             Connection con=DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/localhost", "root", "root");
+                    "jdbc:mysql://localhost:3306/mydb", "root", "root");
             //Create a Statement
             Statement statement = con.createStatement();
             //Execute MySQL query
-            ResultSet resultSet = statement.executeQuery("select Cumulative_Dose from user"); //select value from table
+            ResultSet resultSet = statement.executeQuery("SELECT Cumulative_Dose FROM user WHERE ID = 1;"); //select value from table
             //Process the result set
             cumulativeDose = resultSet.getInt(1);
 
