@@ -11,7 +11,7 @@ public class Controller {
     final static int maxDailyDose = 25; // maximum amount of daily dose
     final static int minDose = 1; // minimum dose
     public int compDose = 0;
-    public int cumulativeDose; // total dose in last 24 hours //Get from SQL
+    public int cumulativeDose = 0; // total dose in last 24 hours //Get from SQL
 
 
     public static SugarLevel sugarLevel;
@@ -91,28 +91,26 @@ public class Controller {
 
     }
 
-    public void connectDB(){
 
-    }
-    //TODO fill these functions out
     public void readFromDatabase(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             //Connect the the database
             Connection con=DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/@localhost", "root", "root");
+                    "jdbc:mysql://localhost:3306/localhost", "root", "root");
             //Create a Statement
             Statement statement = con.createStatement();
             //Execute MySQL query
-            ResultSet resultSet = statement.executeQuery("select cumDose from table"); //select value from table
+            ResultSet resultSet = statement.executeQuery("select cumulative_dose from user"); //select value from table
             //Process the result set
-            while(resultSet.next()){
-                cumulativeDose = resultSet.getInt("cumDose");
-            }
+            cumulativeDose = resultSet.getInt(1);
+
+            System.out.println("Connected and read value from table:");
             System.out.println(cumulativeDose);
 
             con.close();
-        } catch(Exception e){System.out.println(e);}
+        } catch(Exception e){
+            e.printStackTrace();}
 
     }
 
@@ -126,13 +124,14 @@ public class Controller {
             Statement statement = con.createStatement();
 
             //Execute MySQL query
-            String sql = "update tablesname set cumDose ='" + cumulativeDose + "' where id = 1";
+            String sql = "update user set cumulative_dose ='" + cumulativeDose + "' where ID = 1";
             statement.executeUpdate(sql);
 
             System.out.println("saved to database");
 
             con.close();
-        } catch(Exception e){System.out.println(e);}
+        } catch(Exception e){
+            e.printStackTrace();}
     }
 
 }

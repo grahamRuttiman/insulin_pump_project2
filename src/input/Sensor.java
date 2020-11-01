@@ -17,7 +17,6 @@ public class Sensor {
        if (bloodSugar < 0){
            bloodSugar = 0;
        }
-       //TODO save to SQL
     }
 
 }

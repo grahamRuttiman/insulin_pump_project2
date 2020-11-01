@@ -5,8 +5,6 @@ import input.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.Timer;
 import javax.swing.JSpinner;
@@ -55,72 +53,60 @@ public class Main {
 
         //Reservoir Button
         reservoirButton.setBounds(0, 0, 150, 50);
-        reservoirButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (controller.reservoir.reservoirPresent) {
-                    controller.reservoir.reservoirPresent = false;
-                    reservoirButton.setText("Reservoir Missing");
-                } else {
-                    controller.reservoir.reservoirPresent = true;
-                    reservoirButton.setText("Reservoir Present");
-                }
+        reservoirButton.addActionListener(actionEvent -> {
+            if (controller.reservoir.reservoirPresent) {
+                controller.reservoir.reservoirPresent = false;
+                reservoirButton.setText("Reservoir Missing");
+            } else {
+                controller.reservoir.reservoirPresent = true;
+                reservoirButton.setText("Reservoir Present");
             }
         });
 
         //Needle Button
         needleButton.setBounds(150, 0, 150, 50);
-        needleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        needleButton.addActionListener(actionEvent -> {
 
-                if (controller.needle.needlePresent) {
-                    controller.needle.needlePresent = false;
-                    needleButton.setText("Needle Missing");
-                } else {
-                    controller.needle.needlePresent = true;
-                    needleButton.setText("Needle Present");
-                }
+            if (controller.needle.needlePresent) {
+                controller.needle.needlePresent = false;
+                needleButton.setText("Needle Missing");
+            } else {
+                controller.needle.needlePresent = true;
+                needleButton.setText("Needle Present");
             }
         });
 
         //Cycle Hardware Button
         hardwareButton.setBounds(300, 0, 150, 50);
-        hardwareButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (controller.hardwareTest == HardwareTest.OK) {
-                    controller.hardwareTest = HardwareTest.BATTERYLOW;
-                    hardwareButton.setText("Battery Low");
-                } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
-                    controller.hardwareTest = HardwareTest.PUMPFAIL;
-                    hardwareButton.setText("Pump Fail");
-                } else if (controller.hardwareTest == HardwareTest.PUMPFAIL) {
-                    controller.hardwareTest = HardwareTest.SENSORFAIL;
-                    hardwareButton.setText("Sensor Fail");
-                } else if (controller.hardwareTest == HardwareTest.SENSORFAIL) {
-                    controller.hardwareTest = HardwareTest.DELIVERYFAIL;
-                    hardwareButton.setText("Delivery Fail");
-                } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL) {
-                    controller.hardwareTest = HardwareTest.OK;
-                    hardwareButton.setText("Hardware OK");
-                } else {
-                    errorDisplay.setText("Hardware Button Error");
-                }
+        hardwareButton.addActionListener(actionEvent -> {
+            if (controller.hardwareTest == HardwareTest.OK) {
+                controller.hardwareTest = HardwareTest.BATTERYLOW;
+                hardwareButton.setText("Battery Low");
+            } else if (controller.hardwareTest == HardwareTest.BATTERYLOW) {
+                controller.hardwareTest = HardwareTest.PUMPFAIL;
+                hardwareButton.setText("Pump Fail");
+            } else if (controller.hardwareTest == HardwareTest.PUMPFAIL) {
+                controller.hardwareTest = HardwareTest.SENSORFAIL;
+                hardwareButton.setText("Sensor Fail");
+            } else if (controller.hardwareTest == HardwareTest.SENSORFAIL) {
+                controller.hardwareTest = HardwareTest.DELIVERYFAIL;
+                hardwareButton.setText("Delivery Fail");
+            } else if (controller.hardwareTest == HardwareTest.DELIVERYFAIL) {
+                controller.hardwareTest = HardwareTest.OK;
+                hardwareButton.setText("Hardware OK");
+            } else {
+                errorDisplay.setText("Hardware Button Error");
             }
         });
         //Test Button
         testButton.setBounds(75, 50, 300, 50);
-        testButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (state == State.RUN) {
-                    test();
-                } else {
-                    errorDisplay.setText("Set device to auto");
-                }
-
+        testButton.addActionListener(actionEvent -> {
+            if (state == State.RUN) {
+                test();
+            } else {
+                errorDisplay.setText("Set device to auto");
             }
+
         });
 
         //Insulin Display
@@ -147,31 +133,23 @@ public class Main {
 
         //Dosage Button
         dosageButton.setBounds(0, 150, 300, 50);
-        dosageButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        dosageButton.addActionListener(actionEvent -> {
 
-                controller.compDose = (Integer) dosageSpinner.getValue();
-                controller.reservoir.insulinAvailable = (Integer) insulinAvailableSpinner.getValue();
+            controller.compDose = (Integer) dosageSpinner.getValue();
+            controller.reservoir.insulinAvailable = (Integer) insulinAvailableSpinner.getValue();
 
-                if (state != State.RUN) {
-                    errorDisplay.setText("Must be in auto mode");
-                } else {
-                    administerDosage();
-                    insulinAvailableSpinner.setValue(controller.reservoir.insulinAvailable);
-                    bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
-                }
+            if (state != State.RUN) {
+                errorDisplay.setText("Must be in auto mode");
+            } else {
+                administerDosage();
+                insulinAvailableSpinner.setValue(controller.reservoir.insulinAvailable);
+                bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
             }
         });
 
         //Replace reservoir
         reservoirResetButton.setBounds(300, 150, 150, 50);
-        reservoirResetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                reset();
-            }
-        });
+        reservoirResetButton.addActionListener(actionEvent -> reset());
 
 
         //error display
@@ -209,55 +187,46 @@ public class Main {
         // Off Button
         offButton.setBounds(250, 250, 95, 30);
         offButton.setBackground(Color.gray);
-        offButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                //Set Colour
-                offButton.setBackground(Color.gray);
-                manualButton.setBackground(Color.white);
-                autoButton.setBackground(Color.white);
-                //Clear Display
-                display1.setText("");
-                display2.setText("");
-                clockDisplay.setText("");
-                off();
-            }
+        offButton.addActionListener(actionEvent -> {
+            //Set Colour
+            offButton.setBackground(Color.gray);
+            manualButton.setBackground(Color.white);
+            autoButton.setBackground(Color.white);
+            //Clear Display
+            display1.setText("");
+            display2.setText("");
+            clockDisplay.setText("");
+            off();
         });
 
         // Auto Button
         autoButton.setBounds(250, 350, 95, 30);
-        autoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                offButton.setBackground(Color.white);
-                manualButton.setBackground(Color.white);
-                autoButton.setBackground(Color.gray);
+        autoButton.addActionListener(actionEvent -> {
+            offButton.setBackground(Color.white);
+            manualButton.setBackground(Color.white);
+            autoButton.setBackground(Color.gray);
 
-                if (state == State.OFF) {
-                    startUp();
-                    run();
-                } else {
-                    run();
-                }
-
+            if (state == State.OFF) {
+                startUp();
+                run();
+            } else {
+                run();
             }
+
         });
 
         // Manual Button
         manualButton.setBounds(250, 300, 95, 30);
-        manualButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                offButton.setBackground(Color.white);
-                manualButton.setBackground(Color.gray);
-                autoButton.setBackground(Color.white);
+        manualButton.addActionListener(actionEvent -> {
+            offButton.setBackground(Color.white);
+            manualButton.setBackground(Color.gray);
+            autoButton.setBackground(Color.white);
 
-                if (state == State.OFF) {
-                    startUp();
-                    manual();
-                } else {
-                    manual();
-                }
+            if (state == State.OFF) {
+                startUp();
+                manual();
+            } else {
+                manual();
             }
         });
 
@@ -265,36 +234,31 @@ public class Main {
         // Manual Dose Button
         doseButton.setBounds(50, 300, 95, 30);
         doseButton.setBackground(Color.green);
-        doseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        doseButton.addActionListener(actionEvent -> {
 
-                if (state != State.MANUAL) {
-                    display1.setText("Must be in manual mode");
+            if (state != State.MANUAL) {
+                display1.setText("Must be in manual mode");
 
-                    //Manual dosage in 5 second period
-                } else if (!manualDoseStarted) {
-                    display1.setText("Manual Dosage Activated");
-                    manualDoseStarted = true;
-                    manualDoseTimer = new Timer(5000, new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (controller.compDose > controller.reservoir.insulinAvailable) {
-                                display1.setText("Not enough Insulin");
-                            } else {
-                                administerDosage();
-                            }
-                            manualDoseStarted = false;
-                            manualDoseTimer.stop();
-                        }
-                    });
-                    manualDoseTimer.start();
-                } else {
-                    controller.compDose += 1;
-                    display1.setText("Manual Dosgae Units: " + controller.compDose);
-                }
-
+                //Manual dosage in 5 second period
+            } else if (!manualDoseStarted) {
+                display1.setText("Manual Dosage Activated");
+                manualDoseStarted = true;
+                manualDoseTimer = new Timer(5000, e -> {
+                    if (controller.compDose > controller.reservoir.insulinAvailable) {
+                        display1.setText("Not enough Insulin");
+                    } else {
+                        administerDosage();
+                    }
+                    manualDoseStarted = false;
+                    manualDoseTimer.stop();
+                    display1.setText("");
+                });
+                manualDoseTimer.start();
+            } else {
+                controller.compDose += 1;
+                display1.setText("Manual Dosgae Units: " + controller.compDose);
             }
+
         });
 
         // Frame
@@ -330,30 +294,23 @@ public class Main {
         turnScreensOn();
         display1.setText("Starting Up");
         clockDisplay.setText(clock.getTimeS());
-        //controller.readFromDatabase();
-        //TODO read from SQL
+        controller.readFromDatabase();
 
         //clock Timer update every second
-        clockTimer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clockDisplay.setText(clock.getTimeS());
-                //Check if its a new day.
-                if (clock.getTimeS().equals("00:00:00")) {
-                    controller.cumulativeDose = 0;
-                }
+        clockTimer = new Timer(1000, actionEvent -> {
+            clockDisplay.setText(clock.getTimeS());
+            //Check if its a new day.
+            if (clock.getTimeS().equals("00:00:00")) {
+                controller.cumulativeDose = 0;
             }
         });
         clockTimer.start();
 
         //Self Test Timer every 30 seconds
-        testTimer = new Timer(30000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state = State.TEST;
-                display1.setText("Testing...");
-                test();
-            }
+        testTimer = new Timer(30000, actionEvent -> {
+            state = State.TEST;
+            display1.setText("Testing...");
+            test();
         });
         testTimer.start();
     }
@@ -363,12 +320,9 @@ public class Main {
         display1.setText("Automatic Mode");
 
         //blood sugar timer wait 10 minutes
-        Timer sensorTimer = new Timer(600000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.compDose();
-                administerDosage();
-            }
+        Timer sensorTimer = new Timer(600000, actionEvent -> {
+            controller.compDose();
+            administerDosage();
         });
         sensorTimer.start();
     }
@@ -416,8 +370,7 @@ public class Main {
             }
             turnScreensOff();
             alarm.alarmOn = false;
-//            controller.writeToDatabase();
-            //TODO save values to SQL
+            controller.writeToDatabase();
         }
     }
 
@@ -427,7 +380,7 @@ public class Main {
             if (!alarm.alarmOn){
                 setAlarm();
             }
-            ArrayList<String> bufferArray = new ArrayList<String>();
+            ArrayList<String> bufferArray = new ArrayList<>();
             if (!controller.needle.needlePresent) {
                 bufferArray.add("No needle found");
             }
@@ -462,19 +415,16 @@ public class Main {
         bufferPosition++;
         bufferStarted = true;
 
-        messageBufferTimer = new Timer(2000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alarm.alarmOn){
-                    if (bufferPosition == bufferArray.size()) {
-                        bufferPosition = 0;
-                    }
-                    display1.setText(bufferArray.get(bufferPosition));
-                    bufferPosition++;
-                } else {
-                    messageBufferTimer.stop();
-                    bufferStarted = false;
+        messageBufferTimer = new Timer(2000, actionEvent -> {
+            if (alarm.alarmOn){
+                if (bufferPosition == bufferArray.size()) {
+                    bufferPosition = 0;
                 }
+                display1.setText(bufferArray.get(bufferPosition));
+                bufferPosition++;
+            } else {
+                messageBufferTimer.stop();
+                bufferStarted = false;
             }
         });
         messageBufferTimer.start();
@@ -482,14 +432,13 @@ public class Main {
 
     static void setAlarm() {
         alarm.alarmOn = true;
-        Runnable r = new Runnable() {
-            public void run() {
-                while (alarm.alarmOn) {
-                    Toolkit.getDefaultToolkit().beep();
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException x) {
-                    }
+        Runnable r = () -> {
+            while (alarm.alarmOn) {
+                Toolkit.getDefaultToolkit().beep();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -500,14 +449,11 @@ public class Main {
     static void notEnoughInsulin() {
         setAlarm();
         //Check if insulin is available every 2 seconds
-        Timer insulinTimer = new Timer(2000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (controller.compDose <= controller.reservoir.insulinAvailable) {
-                    alarm.alarmOn = false;
-                    display1.setText("");
-                    administerDosage();
-                }
+        Timer insulinTimer = new Timer(2000, actionEvent -> {
+            if (controller.compDose <= controller.reservoir.insulinAvailable) {
+                alarm.alarmOn = false;
+                display1.setText("");
+                administerDosage();
             }
         });
         insulinTimer.start();

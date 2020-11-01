@@ -10,24 +10,15 @@ public class Reservoir {
 //        this.insulinAvailable = get insulin from SQL;
     }
 
-    public int getInsulinAvailable(){
-            return insulinAvailable;
-    }
-
 
     public void useInsulin(int dose){
             insulinAvailable =- dose;
-            saveInsulin();
     }
 
     public void resetReservoir(){
             insulinAvailable = capacity;
-            saveInsulin();
     }
 
-    private void saveInsulin(){
-            //Saveinsulin mySQL
-    }
 
 
 }
