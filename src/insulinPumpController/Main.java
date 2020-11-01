@@ -48,6 +48,7 @@ public class Main {
         JSpinner dosageSpinner = new JSpinner(model2);
         final JTextField bloodSugarDisplay = new JTextField();
         final JButton dosageButton = new JButton("Administer Dosage");
+        final JButton resetCumDoseButton = new JButton("Reset Cumulative");
         final JTextField errorDisplay = new JTextField();
         final JButton reservoirResetButton = new JButton("Replace Reservoir");
 
@@ -132,7 +133,7 @@ public class Main {
         environmentGUI.add(bloodSugarDisplay);
 
         //Dosage Button
-        dosageButton.setBounds(0, 150, 300, 50);
+        dosageButton.setBounds(0, 150, 150, 50);
         dosageButton.addActionListener(actionEvent -> {
 
             controller.compDose = (Integer) dosageSpinner.getValue();
@@ -145,6 +146,13 @@ public class Main {
                 insulinAvailableSpinner.setValue(controller.reservoir.insulinAvailable);
                 bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
             }
+        });
+
+        //Rest cumulative Dose
+        resetCumDoseButton.setBounds(150, 150, 150, 50);
+        resetCumDoseButton.addActionListener(actionEvent -> {
+            controller.cumulativeDose = 0;
+            errorDisplay.setText("Cumulative dosage reset to 0");
         });
 
         //Replace reservoir
@@ -161,6 +169,7 @@ public class Main {
         environmentGUI.add(hardwareButton);
         environmentGUI.add(testButton);
         environmentGUI.add(dosageButton);
+        environmentGUI.add(resetCumDoseButton);
         environmentGUI.add(reservoirResetButton);
         environmentGUI.setSize(450, 300);
         environmentGUI.getContentPane().setBackground(Color.green);

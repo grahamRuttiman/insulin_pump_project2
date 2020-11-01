@@ -19,25 +19,31 @@ USE `mydb` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`error` (
   `Error_ID` INT NOT NULL,
-  `Error_message` VARCHAR(45) NULL,
+  `Error_message` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`Error_ID`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+INSERT INTO error(Error_ID, Error_message)
+VALUES(1,' ');
 
 -- -----------------------------------------------------
 -- Table `mydb`.`user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`user` (
   `ID` INT NOT NULL,
-  `Cumulative_Dose` INT NULL,
-  `Error_ID` INT NOT NULL,
+  `Cumulative_Dose` INT NULL DEFAULT NULL,
+  `Error_ID` INT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk_user_error_idx` (`Error_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_user_error`
+  INDEX `fk_patient_error_idx` (`Error_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_patient_error`
     FOREIGN KEY (`Error_ID`)
-    REFERENCES `mydb`.`error` (`Error_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`error` (`Error_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+INSERT INTO user(ID, Cumulative_Dose, Error_ID)
+VALUES(1, 0, 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

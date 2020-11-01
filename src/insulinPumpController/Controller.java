@@ -11,7 +11,7 @@ public class Controller {
     final static int maxDailyDose = 25; // maximum amount of daily dose
     final static int minDose = 1; // minimum dose
     public int compDose = 0;
-    public int cumulativeDose = 0; // total dose in last 24 hours //Get from SQL
+    public int cumulativeDose = 50; // total dose in last 24 hours //Get from SQL
 
 
     public static SugarLevel sugarLevel;
@@ -101,11 +101,12 @@ public class Controller {
             //Create a Statement
             Statement statement = con.createStatement();
             //Execute MySQL query
-            ResultSet resultSet = statement.executeQuery("SELECT Cumulative_Dose FROM user WHERE ID = 1;"); //select value from table
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM user WHERE ID = 1"); //select value from table
             //Process the result set
-            cumulativeDose = resultSet.getInt(1);
-
-            System.out.println("Connected and read value from table:");
+            if (resultSet.next()){
+                cumulativeDose = resultSet.getInt(2);
+            }
+            System.out.println("Read from database");
             System.out.println(cumulativeDose);
 
             con.close();
@@ -116,13 +117,12 @@ public class Controller {
 
     public void writeToDatabase(){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             //Connect the the database
             Connection con=DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/@localhost", "root", "root");
+                    "jdbc:mysql://localhost:3306/mydb", "root", "root");
             //Create a Statement
             Statement statement = con.createStatement();
-
             //Execute MySQL query
             String sql = "update user set Cumulative_Dose ='" + cumulativeDose + "' where ID = 1";
             statement.executeUpdate(sql);
