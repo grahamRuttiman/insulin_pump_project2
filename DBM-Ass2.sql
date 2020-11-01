@@ -24,15 +24,15 @@ CREATE TABLE IF NOT EXISTS `mydb`.`error` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `mydb`.`patient`
+-- Table `mydb`.`user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`user` (
   `ID` INT NOT NULL,
   `Cumulative_Dose` INT NULL,
   `Error_ID` INT NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk_patient_error_idx` (`Error_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_patient_error`
+  INDEX `fk_user_error_idx` (`Error_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_user_error`
     FOREIGN KEY (`Error_ID`)
     REFERENCES `mydb`.`error` (`Error_ID`)
     ON DELETE NO ACTION
