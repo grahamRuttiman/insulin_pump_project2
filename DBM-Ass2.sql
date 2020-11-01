@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`error` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-INSERT INTO user(Error_ID, Error_message)
+INSERT INTO error(Error_ID, Error_message)
 VALUES(1,' ');
 
 -- -----------------------------------------------------
