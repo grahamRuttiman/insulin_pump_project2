@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`error` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+INSERT INTO user(Error_ID, Error_message)
+VALUES(1,' ');
 
 -- -----------------------------------------------------
 -- Table `mydb`.`user`
@@ -40,6 +42,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`user` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+INSERT INTO user(ID, Cumulative_Dose, Error_ID)
+VALUES(1, 0, 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
