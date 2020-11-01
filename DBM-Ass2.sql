@@ -26,17 +26,14 @@ ENGINE = InnoDB;
 INSERT INTO error(Error_ID, Error_message)
 VALUES(1,'ERROR! insulin stopped');
 
-
 -- -----------------------------------------------------
 -- Table `mydb`.`patient`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`patient` (
-  `Patient_ID` INT NOT NULL,
-  `Dose_1` INT NULL,
-  `Dose_2` INT NULL,
-  `Dose_3` INT NULL,
+CREATE TABLE IF NOT EXISTS `mydb`.`user` (
+  `ID` INT NOT NULL,
+  `Cumulative_Dose` INT NULL,
   `Error_ID` INT NOT NULL,
-  PRIMARY KEY (`Patient_ID`),
+  PRIMARY KEY (`ID`),
   INDEX `fk_patient_error_idx` (`Error_ID` ASC) VISIBLE,
   CONSTRAINT `fk_patient_error`
     FOREIGN KEY (`Error_ID`)
@@ -45,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`patient` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO patient(Patient_ID, Dose_1, Dose_2, Dose_3, Error_ID)
-VALUES(1, 1, 2, 3, 1);
+INSERT INTO patient(ID, Dose, Error_ID)
+VALUES(1, 3, 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
