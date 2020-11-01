@@ -26,7 +26,6 @@ ENGINE = InnoDB;
 INSERT INTO error(Error_ID, Error_message)
 VALUES(1,'ERROR! insulin stopped');
 
-
 -- -----------------------------------------------------
 -- Table `mydb`.`patient`
 -- -----------------------------------------------------
