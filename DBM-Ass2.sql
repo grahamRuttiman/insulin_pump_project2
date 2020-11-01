@@ -23,27 +23,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`error` (
   PRIMARY KEY (`Error_ID`))
 ENGINE = InnoDB;
 
-INSERT INTO error(Error_ID, Error_message)
-VALUES(1,'ERROR! insulin stopped');
-
 -- -----------------------------------------------------
--- Table `mydb`.`patient`
+-- Table `mydb`.`user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`user` (
   `ID` INT NOT NULL,
   `Cumulative_Dose` INT NULL,
   `Error_ID` INT NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `fk_patient_error_idx` (`Error_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_patient_error`
+  INDEX `fk_user_error_idx` (`Error_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_user_error`
     FOREIGN KEY (`Error_ID`)
     REFERENCES `mydb`.`error` (`Error_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-INSERT INTO patient(ID, Dose, Error_ID)
-VALUES(1, 3, 1);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
