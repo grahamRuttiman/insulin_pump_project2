@@ -7,8 +7,8 @@ public class Controller {
 
     private static final int safeMin = 6; // minimum safe blood sugar level
     private static final int safeMax = 14; // maximum safe blood sugar level
-    final static int maxSingleDose = 4; // maximum amount of single dose
-    final static int maxDailyDose = 25; // maximum amount of daily dose
+    public final static int maxDailyDose = 25; // maximum amount of daily dose
+    public final static int maxSingleDose = 4; // maximum amount of single dose
     final static int minDose = 1; // minimum dose
     public int compDose = 0;
     public int cumulativeDose = 50; // total dose in last 24 hours //Get from SQL

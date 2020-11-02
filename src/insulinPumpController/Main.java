@@ -6,9 +6,6 @@ import input.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.Timer;
-import javax.swing.JSpinner;
-
 
 public class Main {
 
@@ -30,6 +27,7 @@ public class Main {
     static final JTextField display1 = new JTextField();
     static final JTextField display2 = new JTextField();
     static final JTextField clockDisplay = new JTextField();
+    static final JTextField bloodSugarDisplay = new JTextField();
 
     static void environmentGUI() {
 
@@ -46,7 +44,6 @@ public class Main {
         JSpinner insulinAvailableSpinner = new JSpinner(model);
         final JTextField dosageDisplay = new JTextField();
         JSpinner dosageSpinner = new JSpinner(model2);
-        final JTextField bloodSugarDisplay = new JTextField();
         final JButton dosageButton = new JButton("Administer Dosage");
         final JButton resetCumDoseButton = new JButton("Reset Cumulative");
         final JTextField errorDisplay = new JTextField();
@@ -141,10 +138,12 @@ public class Main {
 
             if (state != State.RUN) {
                 errorDisplay.setText("Must be in auto mode");
+            } else if (controller.cumulativeDose > controller.maxDailyDose) {
+                errorDisplay.setText("Max daily dosage exceeded");
+            } else if (controller.compDose > controller.maxSingleDose) {
+                errorDisplay.setText("Max single dosage exceeded");
             } else {
                 administerDosage();
-                insulinAvailableSpinner.setValue(controller.reservoir.insulinAvailable);
-                bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
             }
         });
 
@@ -152,6 +151,7 @@ public class Main {
         resetCumDoseButton.setBounds(150, 150, 150, 50);
         resetCumDoseButton.addActionListener(actionEvent -> {
             controller.cumulativeDose = 0;
+            controller.writeToDatabase();
             errorDisplay.setText("Cumulative dosage reset to 0");
         });
 
@@ -172,7 +172,7 @@ public class Main {
         environmentGUI.add(resetCumDoseButton);
         environmentGUI.add(reservoirResetButton);
         environmentGUI.setSize(450, 300);
-        environmentGUI.getContentPane().setBackground(Color.green);
+        environmentGUI.getContentPane().setBackground(Color.gray);
         environmentGUI.setLayout(null);
         environmentGUI.setVisible(true);
 
@@ -217,10 +217,8 @@ public class Main {
 
             if (state == State.OFF) {
                 startUp();
-                run();
-            } else {
-                run();
             }
+            run();
 
         });
 
@@ -233,10 +231,8 @@ public class Main {
 
             if (state == State.OFF) {
                 startUp();
-                manual();
-            } else {
-                manual();
             }
+            manual();
         });
 
 
@@ -252,14 +248,12 @@ public class Main {
             } else if (!manualDoseStarted) {
                 display1.setText("Manual Dosage Activated");
                 manualDoseStarted = true;
+                testTimer.stop();
                 manualDoseTimer = new Timer(5000, e -> {
-                    if (controller.compDose > controller.reservoir.insulinAvailable) {
-                        display1.setText("Not enough Insulin");
-                    } else {
-                        administerDosage();
-                    }
+                    administerDosage();
                     manualDoseStarted = false;
                     manualDoseTimer.stop();
+                    testTimer.start();
                     display1.setText("");
                 });
                 manualDoseTimer.start();
@@ -317,7 +311,7 @@ public class Main {
 
         //Self Test Timer every 30 seconds
         testTimer = new Timer(30000, actionEvent -> {
-            state = State.TEST;
+//            state = State.TEST;
             display1.setText("Testing...");
             test();
         });
@@ -348,6 +342,8 @@ public class Main {
             controller.sensor.lowerBloodSugar(controller.compDose);
             controller.cumulativeDose += controller.compDose;
             controller.compDose = 0;
+            bloodSugarDisplay.setText("Blood Sugar: " + controller.sensor.bloodSugar);
+            controller.writeToDatabase();
         }
     }
 
@@ -371,22 +367,21 @@ public class Main {
             clockTimer.stop();
             testTimer.stop();
 
-            if (manualDoseStarted){
+            if (manualDoseStarted) {
                 manualDoseTimer.stop();
             }
-            if (bufferStarted){
+            if (bufferStarted) {
                 messageBufferTimer.stop();
             }
             turnScreensOff();
             alarm.alarmOn = false;
-            controller.writeToDatabase();
         }
     }
 
     static void test() {
-
+        testTimer.stop();
         if (controller.hardwareTest != HardwareTest.OK || !controller.needle.needlePresent || !controller.reservoir.reservoirPresent) {
-            if (!alarm.alarmOn){
+            if (!alarm.alarmOn) {
                 setAlarm();
             }
             ArrayList<String> bufferArray = new ArrayList<>();
@@ -412,7 +407,8 @@ public class Main {
             }
         } else {
             alarm.alarmOn = false;
-            display1.setText("Last Test completed at " + clock.getTimeS() + ". No issues found.");
+            testTimer.start();
+            display1.setText("Last test completed at " + clock.getTimeS() + ". No issues found.");
         }
 
     }
@@ -425,7 +421,7 @@ public class Main {
         bufferStarted = true;
 
         messageBufferTimer = new Timer(2000, actionEvent -> {
-            if (alarm.alarmOn){
+            if (alarm.alarmOn) {
                 if (bufferPosition == bufferArray.size()) {
                     bufferPosition = 0;
                 }
@@ -434,6 +430,7 @@ public class Main {
             } else {
                 messageBufferTimer.stop();
                 bufferStarted = false;
+                bufferArray.clear();
             }
         });
         messageBufferTimer.start();
@@ -457,12 +454,14 @@ public class Main {
 
     static void notEnoughInsulin() {
         setAlarm();
+        testTimer.stop();
         //Check if insulin is available every 2 seconds
         Timer insulinTimer = new Timer(2000, actionEvent -> {
             if (controller.compDose <= controller.reservoir.insulinAvailable) {
                 alarm.alarmOn = false;
                 display1.setText("");
                 administerDosage();
+                testTimer.start();
             }
         });
         insulinTimer.start();
